@@ -1,0 +1,18 @@
+oh-my-posh init pwsh | Invoke-Expression
+
+#oh-my-posh init pwsh --config 'https://raw.githubusercontent.com/archways404/ompcfg/main/ompcfg.json' | Invoke-Expression
+#oh-my-posh init pwsh --config 'C:\Users\phili\ompconfig\ompcfgbeta.json' | Invoke-Expression
+#oh-my-posh init pwsh --config 'https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/jblab_2021.omp.json' | Invoke-Expression
+
+oh-my-posh init pwsh --config 'https://raw.githubusercontent.com/archways404/dotfiles/main/Oh-My-Posh-Custom' | Invoke-Expression
+
+Import-Module -Name Terminal-Icons
+
+#Set-PSReadLineOption -PredictionViewStyle ListView
+
+#$PSReadLineOptions = @{
+#    EditMode = "Windows"
+#    HistoryNoDuplicates = $true
+#    HistorySearchCursorMovesToEnd = $true
+#}
+#Set-PSReadLineOption @PSReadLineOptions
