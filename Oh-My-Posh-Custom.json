@@ -106,7 +106,7 @@
           "trailing_diamond": "\ue0b0",
           "template": " {{ .CurrentDate | date .Format }} ",
           "properties": {
-            "time_format": "6:33PM"
+            "time_format": "3:04PM"
           }
         }
       ]
