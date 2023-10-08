@@ -1,0 +1,4 @@
+ssh archways404.dev
+:9000 portainer
+:90 server
+https://docker.archways404.dev/
