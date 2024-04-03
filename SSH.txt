@@ -1,0 +1,15 @@
+[Start tmux session]
+tmux
+
+[Leave tmux session]
+control + b, d
+
+[New tmux window]
+control + b, c
+
+[List tmux sessions]
+tmux ls
+
+[Attach to a tmux session]
+tmux attach-session -t [session-name or ID]
+
