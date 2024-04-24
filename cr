@@ -1,5 +1,9 @@
 #!/bin/bash
-# The command "CR" stands for "Compile and Run" and is a script to comile and run a C++ program.:
+# The command "CR" stands for "Compile and Run" and is a script to comile and run a C++ program.
+# Setup:
+# 1. "chmod +x cr"
+# 2. "sudo mv cr /usr/local/bin/"
+
 # "cr filename" (without extension)
 # Example: "cr input_text" (for input_text.cpp)
 
