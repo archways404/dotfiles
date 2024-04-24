@@ -15,7 +15,7 @@ filename=$1
 # "o2" -> optimization level 2
 # "o3" -> optimization level 3
 
-g++ -Wall -std=c++17 -O3 -o $filename $filename.cpp
+g++ -Wall -std=c++20 -O3 -o $filename $filename.cpp
 if [ $? -eq 0 ]; then
     echo "Compilation successful. Running..."
     ./$filename
