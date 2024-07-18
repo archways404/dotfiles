@@ -1,4 +1,13 @@
-# SETUP
+# SETUP SCRIPT
+
+```sh
+curl -O https://raw.githubusercontent.com/archways404/dotfiles/main/setup_c.sh
+chmod +x setup_c.sh
+./setup_c.sh
+```
+
+# SETUP MANUAL
+
 ```sh
 cd /usr/local/bin
 ```
