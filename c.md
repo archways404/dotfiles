@@ -3,6 +3,7 @@
 ```sh
 curl -O https://raw.githubusercontent.com/archways404/dotfiles/main/setup_c.sh
 chmod +x setup_c.sh
+sudo ./setup_c.sh
 ./setup_c.sh
 ```
 
