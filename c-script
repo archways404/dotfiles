@@ -1,0 +1,68 @@
+# Makefile
+
+# Variables
+CC = gcc
+CFLAGS = -Wall -g
+TARGET = main
+
+# ANSI color codes
+BLACK = \033[0;30m
+RED = \033[0;31m
+GREEN = \033[0;32m
+ORANGE = \033[0;33m
+BLUE = \033[0;34m
+MAGENTA = \033[0;35m
+CYAN = \033[0;36m
+WHITE = \033[0;37m
+RESET = \033[0m
+
+# ANSI text attributes
+BOLD = \033[1m
+UNDERLINE = \033[4m
+BLINK = \033[5m
+INVERT = \033[7m
+
+# Default rule
+all: clean $(TARGET) run
+
+# Rule to compile the target
+$(TARGET): $(TARGET).c
+	@echo ""
+	@{ time $(CC) $(CFLAGS) -o $(TARGET) $(TARGET).c; } 2>&1 | awk '\
+		/real/ { \
+			split($$2, t, /[ms]/); \
+			ms = t[1] * 1000 + t[2] * 10; \
+			if (ms < 600) { \
+				color = "$(GREEN)"; \
+			} else if (ms < 1000) { \
+				color = "$(ORANGE)"; \
+			} else { \
+				color = "$(RED)"; \
+			} \
+			printf "$(BLACK)$(BOLD)[CT] $(RESET)" color "%fms\n$(RESET)", ms; \
+		}'
+
+# Rule to run the program
+run:
+	@{ time ./$(TARGET) 2>&1; } 2>&1 | awk '\
+		/real/ { \
+			split($$2, t, /[ms]/); \
+			ms = t[1] * 1000 + t[2] * 10; \
+			if (ms < 600) { \
+				color = "$(GREEN)"; \
+			} else if (ms < 1000) { \
+				color = "$(ORANGE)"; \
+			} else { \
+				color = "$(RED)"; \
+			} \
+			printf "$(BLACK)$(BOLD)[RT] $(RESET)" color "%fms\n$(RESET)", ms; \
+		}'
+	@echo ""
+	@printf "$(BLACK)$(BOLD)[OUTPUT]$(RESET)\n"
+	@printf "$(WHITE)\n"
+	@./$(TARGET)
+	@echo ""
+
+# Rule to clean up the old binary
+clean:
+	@rm -f $(TARGET)
