@@ -1,0 +1,2 @@
+-- GLOBAL INIT 
+require("archways")
