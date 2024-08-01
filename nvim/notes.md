@@ -100,3 +100,4 @@ nvim
 
 Notes:
 https://github.com/jdhao/nvim-config
+https://vim-bootstrap.com/
