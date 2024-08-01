@@ -34,6 +34,39 @@
 | `<C-K>`      | Insert | `copilot#Next()`                                                               | Next GitHub Copilot suggestion                           |
 | `<C-J>`      | Insert | `copilot#Previous()`                                                           | Previous GitHub Copilot suggestion                       |
 
+## Additional Plugin Keybinds
+
+### Harpoon
+
+| Keybind     | Mode   | Action                | Description                 |
+| ----------- | ------ | --------------------- | --------------------------- |
+| `<leader>a` | Normal | `mark.add_file`       | Add file to harpoon         |
+| `<C-e>`     | Normal | `ui.toggle_quick_menu`| Toggle harpoon quick menu   |
+| `<C-h>`     | Normal | `ui.nav_file(1)`      | Navigate to harpoon file 1  |
+| `<C-t>`     | Normal | `ui.nav_file(2)`      | Navigate to harpoon file 2  |
+| `<C-n>`     | Normal | `ui.nav_file(3)`      | Navigate to harpoon file 3  |
+| `<C-s>`     | Normal | `ui.nav_file(4)`      | Navigate to harpoon file 4  |
+
+### Telescope
+
+| Keybind      | Mode   | Action                | Description                   |
+| ------------ | ------ | --------------------- | ----------------------------- |
+| `<leader>pf` | Normal | `builtin.find_files`  | Find files using Telescope    |
+| `<C-p>`      | Normal | `builtin.git_files`   | Find Git files using Telescope|
+| `<leader>ps` | Normal | `builtin.grep_string` | Grep for a string using Telescope |
+
+### Fugitive
+
+| Keybind      | Mode   | Action         | Description      |
+| ------------ | ------ | -------------- | ---------------- |
+| `<leader>gs` | Normal | `vim.cmd.Git`  | Open Git status  |
+
+### UndoTree
+
+| Keybind      | Mode   | Action                    | Description         |
+| ------------ | ------ | ------------------------- | ------------------- |
+| `<leader>u`  | Normal | `vim.cmd.UndotreeToggle`  | Toggle Undotree     |
+
 ## Default Keybinds (Common Ones)
 
 | Keybind  | Mode   | Action                 | Description                  |
