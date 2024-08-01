@@ -97,3 +97,6 @@ brew install stylua
 nvim
 :PackerInstall
 ```
+
+Notes:
+https://github.com/jdhao/nvim-config
