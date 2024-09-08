@@ -39,5 +39,53 @@ return require('packer').startup(function(use)
   }
 
   use { 'github/copilot.vim' }
+
+  use {
+  'nvim-tree/nvim-tree.lua',
+  requires = {
+    'nvim-tree/nvim-web-devicons',
+  },
+  }
+
+  use {
+  'nvim-lualine/lualine.nvim',
+  requires = { 'kyazdani42/nvim-web-devicons', opt = true }
+  }
+
+  use ('lukas-reineke/indent-blankline.nvim')
+
+  use {
+  'numToStr/Comment.nvim',
+  config = function()
+    require('Comment').setup {
+      -- You can customize mappings or leave it as default
+      -- Mappings: `gcc` to comment a line, `gc` in visual mode to comment a block
+    }
+  end
+  }
+
+  use {
+  'iamcco/markdown-preview.nvim',
+  run = 'cd app && npm install', -- Ensure you have Node.js installed
+  setup = function()
+    vim.g.mkdp_filetypes = { "markdown" }
+  end,
+  ft = { "markdown" },
+  }
+
+  use ('lewis6991/impatient.nvim')
+  require('impatient')
+
+  use {
+  'windwp/nvim-autopairs',
+  config = function()
+    require('nvim-autopairs').setup {}
+  end
+  }
+
+  use {"akinsho/toggleterm.nvim", tag = '*', config = function()
+    require("toggleterm").setup()
+  end}
+
     
 end)
