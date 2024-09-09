@@ -35,5 +35,9 @@ vim.g.mapleader = " "
 vim.opt.virtualedit = "onemore"
 
 -- vim.o.shell = "C:Users/philipstenberg/AppData/Local/Programs/Git/git-bash.exe"
-vim.o.shell = 'C:"/Program Files"/Git/bin/bash.exe'
-vim.o.shellcmdflag = "-s"
+-- WINDOWS
+-- vim.o.shell = 'C:"/Program Files"/Git/bin/bash.exe'
+-- vim.o.shellcmdflag = "-s"
+-- MACOS
+vim.o.shell = '/bin/zsh'  -- Use Zsh as the shell
+vim.o.shellcmdflag = '-c'  -- The command flag for Zsh
