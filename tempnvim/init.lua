@@ -19,6 +19,8 @@ vim.keymap.set('n', '<leader>tf', ':ToggleTerm direction=float<CR>', { noremap =
 -- Optional: Key mapping to open Glow in normal mode
 vim.api.nvim_set_keymap('n', '<leader>gm', ':Glow<CR>', { noremap = true, silent = true })
 
+vim.api.nvim_set_keymap('n', '<leader>c', ':lua require("Comment.api").toggle_current_linewise()<CR>', { noremap = true, silent = true })
+
 
 vim.api.nvim_create_autocmd({ "VimEnter" }, {
   callback = function()
@@ -48,6 +50,54 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
   -- LazyVim and additional plugins
   { "folke/lazy.nvim", event = "VeryLazy" },
+
+  {
+    "numToStr/Comment.nvim",
+    config = function()
+      require("Comment").setup()
+    end,
+  },
+
+  {
+    "folke/which-key.nvim",
+    config = function()
+      require("which-key").setup()
+    end,
+  },
+
+  {
+    "kylechui/nvim-surround",
+    version = "*",   -- Use for stability, or you can specify a branch or commit
+    event = "VeryLazy", -- You can trigger this to load lazily if needed
+    config = function()
+      require("nvim-surround").setup({
+        -- Configuration options here, if needed. Defaults are fine for most cases.
+      })
+    end,
+  },
+
+  {
+    "Wansmer/treesj",
+    requires = { "nvim-treesitter/nvim-treesitter" }, -- Requires nvim-treesitter as a dependency
+    config = function()
+      require("treesj").setup({
+        -- Configuration options if needed (default options are usually fine)
+        use_default_keymaps = false, -- Disable default keymaps if you want to set custom ones
+      })
+
+      -- Example custom keybindings for splitting/joining code blocks
+      vim.api.nvim_set_keymap('n', '<leader>ts', ':TSJSplit<CR>', { noremap = true, silent = true })
+      vim.api.nvim_set_keymap('n', '<leader>tj', ':TSJJoin<CR>', { noremap = true, silent = true })
+    end,
+  },
+
+
+
+
+
+
+
+
 
   -- Add glow.nvim plugin
   {
@@ -315,7 +365,39 @@ require("lazy").setup({
 
   
   -- Add your preferred plugins
-  { "nvim-treesitter/nvim-treesitter", run = ":TSUpdate" },
+  --{ "nvim-treesitter/nvim-treesitter", run = ":TSUpdate" },
+
+  {
+    "nvim-treesitter/nvim-treesitter",
+    run = ":TSUpdate",  -- Automatically install/update treesitter parsers
+    config = function()
+      require("nvim-treesitter.configs").setup({
+        -- List of parsers to install
+        ensure_installed = { "javascript", "typescript", "html", "css", "lua" }, -- Add your required languages here
+
+        highlight = {
+          enable = true,                -- Enable syntax highlighting
+        },
+        indent = {
+          enable = true,                -- Enable indentation based on Treesitter
+        },
+        incremental_selection = {
+          enable = true,
+          keymaps = {
+            init_selection = "gnn",
+            node_incremental = "grn",
+            scope_incremental = "grc",
+            node_decremental = "grm",
+          },
+        },
+        textobjects = {
+          enable = true,                -- Enable text objects
+        },
+      })
+    end,
+  },
+
+
 
   -- Mason setup for LSP and related tools
   {
