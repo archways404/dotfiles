@@ -1,0 +1,49 @@
+Leader Key:
+  <Space>          -> is set as the leader key (<leader>).
+
+
+ToggleTerm:
+  <leader>th       -> Open terminal in a horizontal split.
+  <leader>tv       -> Open terminal in a vertical split.
+  <leader>tf       -> Open terminal in a floating window.
+
+  <leader>t1       -> Toggle terminal instance 1.
+  <leader>t2       -> Toggle terminal instance 2.
+  <leader>t3       -> Toggle terminal instance 3.
+  <leader>ta       -> Toggle all terminals.
+
+
+Comment Toggle:
+  <leader>c        -> Toggle comment for the current line using Comment.nvim.
+
+
+Glow Markdown Preview:
+  <leader>gm       -> Open markdown preview with Glow.nvim.
+
+
+Treesitter Split/Join:
+  <leader>ts       -> Split code blocks using Treesitter.
+  <leader>tj       -> Join code blocks using Treesitter.
+
+
+TailwindCSS Color Toggle:
+  <leader>tc       -> Toggle TailwindCSS color hints using TailwindTools.nvim.
+
+
+Color Picker:
+  <leader>cp       -> Open the color picker using ccc.nvim. 
+
+
+File Explorer (NvimTree):
+  <leader>e        -> Toggle NvimTree file explorer.
+
+
+Harpoon Navigation:
+  <leader>ha       -> Add a file to Harpoon.
+  <leader>hh       -> Open Harpoon's quick menu.
+  <leader>hn       -> Navigate to the next file in Harpoon.
+  <leader>hp       -> Navigate to the previous file in Harpoon.
+
+
+Hop.nvim Jump Navigation:
+  <leader>fj       -> Jump to a word using Hop.nvim.
