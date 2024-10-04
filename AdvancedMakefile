@@ -1,0 +1,39 @@
+# Compiler
+CC = gcc
+
+# Compiler flags
+CFLAGS = -Wall -g -I./include     # Add include directories
+LDFLAGS = -lm -L./libs            # Add libraries and search paths
+#LDFLAGS = -lm -L./libs -lcustom  # Add custom libraries (e.g., libcustom.a in the libs/ folder)
+
+# Source files and target executable
+SRCS = main.c helper.c other.c    # Add more source files
+OBJS = $(SRCS:.c=.o)
+TARGET = main
+
+# Default rule: clean, build, and run
+all: clean build run
+
+# Rule to compile the program
+build: $(TARGET)
+
+# Linking the object files to create the executable
+$(TARGET): $(OBJS)
+	$(CC) $(CFLAGS) -o $(TARGET) $(OBJS) $(LDFLAGS)
+
+# Rule to compile .c files into .o files
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# Rule to run the program
+run: $(TARGET)
+	@echo "\n"
+	@echo "\033[32m==================== RUNNING ====================\033[0m"
+	./$(TARGET)
+
+# Rule to clean up the object files and executable
+clean:
+	@echo "\033[31m==================== CLEANING ====================\033[0m"
+	rm -f $(OBJS) $(TARGET)
+	@echo "\n"
+	@echo "\033[33m==================== BUILDING ====================\033[0m"
