@@ -4,10 +4,13 @@ TabWidth: 2
 UseTab: Never
 BreakBeforeBraces: Attach 
 AllowShortIfStatementsOnASingleLine: true
-AllowShortFunctionsOnASingleLine: true
+AllowShortFunctionsOnASingleLine: false
 AlignConsecutiveDeclarations: true
 AlignTrailingComments: true
 PointerAlignment: Left
 ReflowComments: true
 IndentCaseLabels: true
+SpaceBeforeAssignmentOperators: true
+SortIncludes: true
+MaxEmptyLinesToKeep: 1
 ColumnLimit: 100
