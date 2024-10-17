@@ -1,5 +1,7 @@
 # Keybind Cheat Sheet
 
+## OUTDATED
+
 ## Custom Keybinds
 
 | Keybind      | Mode   | Action                                                                         | Description                                              |
