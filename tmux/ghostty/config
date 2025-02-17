@@ -1,0 +1,23 @@
+# [WINDOW]
+
+background = 282c34
+foreground = ffffff
+
+background-opacity=0.90
+background-blur=true
+unfocused-split-opacity=1
+
+cursor-style-blink=true
+cursor-click-to-move=true
+
+theme="MaterialDesignColors"
+
+# [KEYBINDINGS]
+
+keybind = ctrl+z=close_surface
+keybind = ctrl+d=new_split:right
+
+# [FONT]
+
+font-family = "JetBrains Mono"
+font-size = "12"

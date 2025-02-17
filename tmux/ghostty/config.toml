@@ -1,0 +1,13 @@
+[window]
+title = "Ghostty Terminal"
+opacity = 0.9
+blur = true
+
+[font]
+size = 14
+normal = { family = "JetBrainsMono Nerd Font", style = "Regular" }
+
+[colors]
+background = "#1E1E1E"
+foreground = "#D4D4D4"
+cursor = "#FFD700"
