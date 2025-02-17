@@ -1,0 +1,24 @@
+local function smooth_scroll(lines, key)
+  local count = 0
+  local timer = vim.loop.new_timer()
+
+  timer:start(0, 10, vim.schedule_wrap(function()
+    if count < lines then
+      vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(key, true, false, true), "n", true)
+      count = count + 1
+    else
+      timer:stop()
+      timer:close()
+    end
+  end))
+end
+
+-- Smooth Scroll Down (5 lines)
+vim.keymap.set("n", "<C-e>", function()
+  smooth_scroll(5, "<C-e>")
+end, { noremap = true, silent = true })
+
+-- Smooth Scroll Up (5 lines)
+vim.keymap.set("n", "<C-y>", function()
+  smooth_scroll(5, "<C-y>")
+end, { noremap = true, silent = true })

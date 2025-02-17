@@ -1,0 +1,49 @@
+[manager]
+
+prepend_keymap = [
+  
+  # Movement (Swedish keyboard layout, direction-based)
+  { on = "å", run = "arrow -1", desc = "Move cursor up (previous entry in current view)" },
+  { on = "ä", run = "arrow 1",  desc = "Move cursor down (next entry in current view)" },
+
+  # Back/Forward navigation in directory history
+  { on = "ö", run = "leave", desc = "Go back to the parent directory" },
+  { on = "'", run = "enter", desc = "Enter the child directory" },
+
+  { on = "<Up>",    run = "arrow -1", desc = "Move cursor up" },
+  { on = "<Down>",  run = "arrow 1",  desc = "Move cursor down" },
+
+  { on = "<C-u>", run = "arrow -50%",  desc = "Move cursor up half page" },
+  { on = "<C-d>", run = "arrow 50%",   desc = "Move cursor down half page" },
+  { on = "<C-b>", run = "arrow -100%", desc = "Move cursor up one page" },
+  { on = "<C-f>", run = "arrow 100%",  desc = "Move cursor down one page" },
+
+  { on = "g", run = "arrow top", desc = "Move cursor to the top" },
+  { on = "G", run = "arrow bot", desc = "Move cursor to the bottom" },
+
+  # Directory navigation (adjusted)
+  { on = "<C-ö>", run = "leave", desc = "Go back to parent directory (was h)" },
+  { on = "<C-ä>", run = "enter", desc = "Enter directory (was l)" },
+
+  { on = "H", run = "back",    desc = "Go back to previous directory" },
+  { on = "L", run = "forward", desc = "Go forward to next directory" },
+
+  # Selection
+  { on = "<Space>", run = [ "toggle", "arrow 1" ], desc = "Toggle selection" },
+  { on = "<C-a>",   run = "toggle_all --state=on", desc = "Select all files" },
+  { on = "<C-r>",   run = "toggle_all",            desc = "Invert selection" },
+
+  # Opening Files
+  { on = "<Enter>", run = "open", desc = "Open selected files" },
+
+  # Search
+  { on = "s", run = "search --via=fd", desc = "Search files by name" },
+  { on = "S", run = "search --via=rg", desc = "Search files by content" },
+
+  # Sorting (sort by modification time, descending)
+  { on = "m", run = "sort mtime --reverse", desc = "Sort by modified time (descending)" },
+  { on = "n", run = "sort natural --reverse=no", desc = "Sort naturally (default)" },
+
+  # Quit Yazi
+  { on = "q", run = "quit", desc = "Quit Yazi" }
+]

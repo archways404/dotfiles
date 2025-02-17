@@ -1,0 +1,31 @@
+return {
+  "williamboman/mason.nvim",
+  dependencies = {
+    "williamboman/mason-lspconfig.nvim",
+  },
+  build = ":MasonUpdate",
+  config = function()
+    require("mason").setup()
+    require("mason-lspconfig").setup({
+      ensure_installed = {
+        "yamlls", -- YAML
+        "ts_ls", -- TypeScript
+        "tailwindcss", -- TailwindCSS
+        "rust_analyzer", -- Rust
+        "pyright", -- Python
+        "html", -- HTML
+        "gopls", -- Go
+        "dockerls", -- Docker
+        "bashls", -- Bash
+        "jsonls", -- JSON
+        "lua_ls", -- Lua
+        "mesonlsp", -- Meson
+        "clangd", -- C
+        "cssls", -- CSS LSP
+        "ast_grep", -- JSX
+        "sqlls", -- SQL
+        "zls", -- ZIG
+      },
+    })
+  end
+}

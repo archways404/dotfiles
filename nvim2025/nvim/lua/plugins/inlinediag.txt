@@ -1,0 +1,35 @@
+return {
+  "rachartier/tiny-inline-diagnostic.nvim",
+  event = "LspAttach",
+  config = function()
+    require("tiny-inline-diagnostic").setup({
+      preset = "minimal", -- Compact UI
+      transparent_bg = true, -- Fully transparent background
+      hi = {
+        error = "DiagnosticError",
+        warn = "DiagnosticWarn",
+        info = "DiagnosticInfo",
+        hint = "DiagnosticHint",
+        arrow = "NonText",
+        background = "NONE", -- No background color
+        mixing_color = "NONE",
+      },
+      options = {
+        show_source = false, -- Hide LSP name (less clutter)
+        use_icons_from_diagnostic = true, -- Use built-in LSP icons
+        add_messages = true, -- Show messages inline
+        throttle = 20, -- Responsive updates
+        softwrap = 5, -- Wrap longer messages at 40 chars
+        multilines = { enabled = true },
+        show_all_diags_on_cursorline = false, -- Show only nearest message
+        enable_on_insert = false, -- Hide diagnostics in Insert mode
+        enable_on_select = false,
+        overflow = { mode = "wrap" }, -- Keep messages on one line
+        severity = {
+          vim.diagnostic.severity.ERROR,
+          vim.diagnostic.severity.WARN,
+        }, -- Show only errors & warnings
+      },
+    })
+  end
+}
