@@ -103,119 +103,6 @@ zi() {
 
 # ---- Cheat Sheet ----
 
-# ---- Two-column quick reference (auto-width + colors) ----
-# Tweakables (optional):
-: ${CHEAT_COL_MIN:=40}        # minimum width of each column
-: ${CHEAT_KEYW:=26}           # width reserved for key chord inside each column
-: ${CHEAT_SEP:=" │ "}         # column separator text
-
-show_cheatsheet_test() {
-  # Colors (turn off with: export CHEAT_NO_COLOR=1)
-  if [[ -n $CHEAT_NO_COLOR ]]; then
-    local B="" DIM="" HI="" GR="" R=""
-  else
-    local B=$'\e[1m'          # bold
-    local DIM=$'\e[2m'        # dim
-    local HI=$'\e[38;5;81m'   # cyan-ish for keys
-    local GR=$'\e[38;5;244m'  # grey for rulers
-    local R=$'\e[0m'          # reset
-  fi
-
-  # Layout
-  local C=${COLUMNS:-$(tput cols 2>/dev/null || echo 100)}
-  local SEP="$CHEAT_SEP"
-  local W=$(( (C - ${#SEP}) / 2 ))
-  (( W < CHEAT_COL_MIN )) && W=$CHEAT_COL_MIN
-
-  local KEYW=$CHEAT_KEYW
-  (( KEYW > W-8 )) && KEYW=$(( W-8 ))
-  local ACTW=$(( W - KEYW - 3 ))   # " - " + action
-
-  local ruleL=$(printf '%*s' $W '' | tr ' ' '-')
-  local ruleR=$ruleL
-
-  _hdr() {
-    printf "\n${B}%-*s${R}%s${B}%-*s${R}\n" $W "$1" "$SEP" $W "$2"
-    printf "${GR}%-*s${R}%s${GR}%-*s${R}\n" $W "$ruleL" "$SEP" $W "$ruleR"
-  }
-
-  _row() {
-    # $1=leftKey $2=leftAction $3=rightKey $4=rightAction
-    printf "%s%-${KEYW}s%s - ${DIM}%-*s${R}%s%s%-${KEYW}s%s - ${DIM}%-*s${R}\n" \
-      "$HI$B" "${1}" "$R" $ACTW "${2}" "$SEP" "$HI$B" "${3}" "$R" $ACTW "${4}"
-  }
-
-  _blank() { printf "%-${W}s%s%-${W}s\n" "" "$SEP" ""; }
-
-  _hdr "Ghostty (terminal)" "Zsh / fzf / zoxide / plugins"
-
-  _row "SUPER + CTRL + SHIFT + PLUS " "equalize splits"           "CTRL-A / CTRL-E"           "start / end of line"
-  _row "SUPER + CTRL + SHIFT + ARROW"           "resize split 10"           "CTRL-U / CTRL-K"           "kill to start / end"
-  _row "CTRL  + ALT  + ARROW        "           "goto split"                "CTRL-W / CTRL-Y"           "delete word / yank"
-  _row "SUPER+CTRL+[ / ]"              "prev / next split"          "CTRL-L"                    "clear screen"
-  _row "CTRL+SHIFT+ENTER"              "toggle split zoom"          "CTRL-Space"                "set mark (select)"
-  _row "CTRL+SHIFT+T / W"        "new / close tab"            "↑ / ↓"                     "history by prefix"
-  _row "CTRL+SHIFT+LEFT/RIGHT"   "prev / next tab"            "CTRL-R"                    "incremental history (fzf overrides)"
-  _row "ALT+1..9 / ALT+9"        "goto tab / last tab"        ""                          ""
-  _row "CTRL+Tab / PgUp/Dn"      "next / prev tab"            ""                          ""
-
-  _blank
-  _row "CTRL+SHIFT+C / V"        "copy / paste"               "CTRL-R (fzf)"              "fuzzy history"
-  _row "CTRL+Insert"             "copy selection"             "CTRL-T"                    "insert file path"
-  _row "SHIFT+Insert"            "paste selection"            "ALT-C / CTRL-F"            "fzf cd into dir"
-  _row "SHIFT+ARROW"            "adjust selection"           "ALT-Space"                 "fzf file picker + preview"
-  _row "SHIFT+PgUp/PgDn"         "scroll page"                ""                          ""
-  _row "SHIFT+Home / End"        "scroll top / bottom"        ""                          ""
-
-  _blank
-  _row "CTRL+Comma"              "open config"                "z <query>"                 "jump to best match"
-  _row "CTRL+SHIFT+I"            "inspector toggle"           "zi"                        "interactive jump (fzf)"
-  _row "C+A+SHIFT+J / C+S+J"     "screenfile open / paste"    "zoxide query"              "list indexed directories"
-  _row "CTRL+SHIFT+E / O"        "new split down / right"     "zoxide add <dir>"          "add directory manually"
-  _row "CTRL+SHIFT+,"            "reload config"              ""                          ""
-  _row "CTRL+ENTER"              "fullscreen"                 ""                          ""
-  _row "ALT+F4 / C+S+Q"          "close window / quit"        ""                          ""
-  _row "CTRL+0 / - / ="          "reset / dec / inc font"     ""                          ""
-
-  _blank
-  _row ""                        ""                           "git"                       "gst, gaa, gcmsg, gco, gp"
-  _row ""                        ""                           "docker"                    "dps, dcu, …"
-  _row ""                        ""                           "npm / node"                "nr, ni, helpers"
-  _row ""                        ""                           "kubectl"                   "k, kga, …"
-  _row ""                        ""                           "web-search"                "google <q>, wiki <q>"
-
-  _blank
-  _row ""                        ""                           "ll / la"                   "long / all list"
-  _row ""                        ""                           "fd"                        "fdfind"
-  _row ""                        ""                           "bat"                       "batcat"
-
-  _blank
-  _row ""                        ""                           "sc"                        "show this sheet"
-  echo
-}
-
-
-show_cheatsheet_t() {
-  # --- Define key color variables ---
-  local RESET='\033[0m'
-  local SUPER_KEY='\033[38;5;206mSUPER\033[0m'   # PINK?
-  local CTRL_KEY='\033[0;33mCTRL\033[0m'     # yellow
-  local SHIFT_KEY='\033[0;35mSHIFT\033[0m'   # purple
-  local ALT_KEY='\033[0;33mALT\033[0m'       # yellow
-  local ENTER_KEY='\033[1;36mENTER\033[0m'   # cyan
-  local TAB_KEY='\033[1;36mTAB\033[0m'
-  local ARROW_KEY='\033[0;32mARROWS\033[0m'  # green
-  local PLUS_KEY='\033[1;37mPLUS\033[0m'     # white/bright
-  local F4_KEY='\033[0;36mF4\033[0m'
-
-  # --- Print rows ---
-  echo -e "${SUPER_KEY} + ${CTRL_KEY} + ${SHIFT_KEY} + ${PLUS_KEY}   →  Equalize splits"
-  echo -e "${SUPER_KEY} + ${CTRL_KEY} + ${SHIFT_KEY} + ${ARROW_KEY} →  Resize split 10"
-  echo -e "${CTRL_KEY} + ${ALT_KEY} + ${ARROW_KEY}                →  Goto split"
-  echo -e "${CTRL_KEY} + ${SHIFT_KEY} + ${ENTER_KEY}              →  Toggle split zoom"
-  echo -e "${ALT_KEY} + ${F4_KEY} / ${CTRL_KEY} + ${SHIFT_KEY} + ${F4_KEY} → Close window / quit"
-}
-
 # --- palette (xterm 256 colors) ---
 # 16 distinct hues + light/dark gray
 typeset -A PALETTE
@@ -262,7 +149,7 @@ pad_to() {
   printf '%s%*s' "$s" $pad ''
 }
 
-# --- preset KEY labels (edit colors if you like) ---
+# --- KEY labels ---
 SUPER=$(color blue   SUPER)
 CTRL=$(color yellow CTRL)
 SHIFT=$(color orange SHIFT)
@@ -270,29 +157,33 @@ ALT=$(color cyan    ALT)
 ENTER=$(color lime ENTER)
 TAB=$(color brown TAB)
 
+# SPECIAL
 PGUP=$(color teal PGUP)
 PGDN=$(color teal PGDN)
 H0ME=$(color cyan HOME)
 END=$(color cyan END)
 INS=$(color cyan INS)
+DEL=$(color red DEL)
+F4=$(color sky F4)
 
+# ARROW
 UP=$(color cyan ↑)
 DOWN=$(color cyan ↓)
 LEFT=$(color cyan ←)
 RIGHT=$(color cyan →)
 ARROW=$(color cyan ←↑↓→)
 
+# BRACKETS
 LBR=$(color cyan  [)
 RBR=$(color cyan  ])
 
+# SYMBOLS
 PLUS=$(color orange +)
 SLASH=$(color cyan  /)
 COMMA=$(color cyan ,)
 NUM=$(color cyan NUMBER)
-
-
-F4=$(color sky F4)
-
+UNDER=$(color cyan _)
+SPACE=$(color cyan SPACE)
 
 # Optional “spacer” (a few spaces) – visible on purpose
 SP=$(printf '%s' '   ')  # 3 spaces; change if you want more
@@ -352,156 +243,121 @@ h3() { printf '%s\n\n' "$(color gray "$*")"; }
 show_cheatsheet() {
   h1 "GHOSTTY"
 
-  h2 "Splits / Tabs"
+  h2 "General"
+  print_row "${CTRL}   ${SHIFT}  N"                     "new_window"
+  print_row "${CTRL}   ${SHIFT}  Q"                     "quit"
+  print_row "${CTRL}   ${SHIFT}  ${PGUP}"               "jump_to_prompt:-1"
+  print_row "${CTRL}   ${SHIFT}  ${PGDN}"               "jump_to_prompt:1"
+  print_row "${ALT}    ${F4}"                           "close_window"
+  nl
+
+  h2 "Splits"
   print_row "${SUPER}  ${CTRL}   ${SHIFT}  ${PLUS}"     "equalize splits"
   print_row "${SUPER}  ${CTRL}   ${SHIFT}  ${ARROW}"    "resize_split 10"
-  print_row "${SUPER}  ${CTRL}   ${SLASH}"              "[TOGGLE] prev / next split"
   print_row "${SUPER}  ${CTRL}   ${LBR}"                "goto_split:previous"
   print_row "${SUPER}  ${CTRL}   ${RBR}"                "goto_split:next"
   print_row "${CTRL}   ${ALT}    ${ARROW}"              "target split"
+  print_row "${CTRL}   ${SHIFT}  ${ENTER}"              "toggle_split_zoom"
+  print_row "${CTRL}   ${SHIFT}  E"                     "new_split:down"
+  print_row "${CTRL}   ${SHIFT}  O"                     "new_split:right"
+  nl
 
-  print_row "${CTRL}   ${SHIFT}  ${ENTER}"              "[TOGGLE] split zoom"
+  h2 "Tabs"
   print_row "${CTRL}   ${SHIFT}  T"                     "new tab"
   print_row "${CTRL}   ${SHIFT}  W"                     "close tab"
-  print_row "${CTRL}   ${SHIFT}  ${LEFT}"               "prev tab"
-  print_row "${CTRL}   ${SHIFT}  ${RIGHT}"              "next tab"
-  print_row "${ALT}    1-9"                             "goto tab"
-  print_row "${ALT}    9"                               "last tab"
-  print_row "${CTRL}   ${TAB}    ${PGUP}"               "next tab"
-  print_row "${CTRL}   ${TAB}    ${PGDN}"               "prev tab"
-
-  print_row "${CTRL}   ${SHIFT}  C"                     "copy"
-  print_row "${CTRL}   ${SHIFT}  V"                     "paste"
-  print_row "${CTRL}   ${SHIFT}  A"                     "select_all"
-  print_row "${CTRL}   ${SHIFT}  E"                     "new_split:down"
-  print_row "${CTRL}   ${SHIFT}  I"                     "inspector:toggle"
-  print_row "${CTRL}   ${SHIFT}  N"                     "new_window"
-  print_row "${CTRL}   ${SHIFT}  O"                     "new_split:right"
-  print_row "${CTRL}   ${SHIFT}  Q"                     "quit"
-  print_row "${CTRL}   ${SHIFT}  T"                     "new_tab"
-  print_row "${CTRL}   ${SHIFT}  W"                     "close_tab"
-  print_row "${CTRL}   ${SHIFT}  ${COMMA}"              "reload_config"
   print_row "${CTRL}   ${SHIFT}  ${LEFT}"               "previous_tab"
   print_row "${CTRL}   ${SHIFT}  ${RIGHT}"              "next_tab"
-  print_row "${CTRL}   ${SHIFT}  ${PGUP}"               "jump_to_prompt:-1"
-  print_row "${CTRL}   ${SHIFT}  ${PGDN}"               "jump_to_prompt:1"
-  print_row "${CTRL}   ${SHIFT}  ${ENTER}"              "toggle_split_zoom"
-  print_row "${CTRL}   ${SHIFT}  ${TAB}"                "previous_tab"
+  print_row "${CTRL}   ${PGDN}"                         "next_tab"
+  print_row "${CTRL}   ${PGUP}"                         "previous_tab"
   print_row "${ALT}    ${NUM}"                          "goto_tab NUMBER"
   print_row "${ALT}    9"                               "last_tab"
-  print_row "${ALT}    ${F4}"                           "close_window"
-  print_row "${CTRL}   ${COMMA}"                        "open config"
-  print_row "${CTRL}   ${PGUP}"                         "previous_tab"
-  print_row "${CTRL}   ${PGDN}"                         "next_tab"
+  n1
+
+  h2 "Scrolling"
   print_row "${SHIFT}   ${H0ME}"                        "scroll_to_top"
   print_row "${SHIFT}   ${END}"                         "scroll_to_bottom"
   print_row "${SHIFT}   ${PGUP}"                        "scroll_page_up"
   print_row "${SHIFT}   ${PGDN}"                        "scroll_page_down"
-
-  nl
-  h2 "General"
-  print_row "${CTRL}   ${SHIFT}"                        "PLACEHOLDER"
-
   nl
 
-  h2 "Something"
-  print_row "${CTRL}   ${SHIFT}"                        "PLACEHOLDER"
+  h2 "Editing"
+  print_row "${CTRL}   ${SHIFT}  C"                     "copy"
+  print_row "${CTRL}   ${SHIFT}  V"                     "paste"
+  print_row "${CTRL}   ${SHIFT}  A"                     "select_all"
+  nl
+
+  h2 "Config & Misc"
+  print_row "${CTRL}   ${SHIFT}  I"                     "inspector:toggle"
+  print_row "${CTRL}   ${SHIFT}  ${COMMA}"              "reload_config"
+  print_row "${CTRL}   ${COMMA}"                        "open_config"
   nl
 
   h1 "Zsh"
-  print_row "${CTRL} + A"                               "start of line"
-  print_row "${CTRL} + E"                               "end of line"
-  print_row "${CTRL} + U"                               "kill to start"
-  print_row "${CTRL} + K"                               "kill to end"
+
+  h2 "Navigation"
+  print_row "${ALT}   F"                                "Move cursor to next word"
+  print_row "${ALT}   B"                                "Move cursor to previous word"
+  print_row "${CTRL}  A"                                "Move cursor to beginning of command"
+  print_row "${CTRL}  E"                                "Move cursor to end of command"
+  print_row "${CTRL}  X,X"                              "Toggle between the start of line and current cursor position"
+  n1
+
+  h2 "Editing"
+  print_row "${ALT}  C"                                 "Capitalize word"
+  print_row "${ALT}  D"                                 "Delete next word"
+  print_row "${ALT}  ${DEL}"                            "Delete previous word"
+  print_row "${ALT}  L"                                 "Lowercase word"
+  print_row "${ALT}  U"                                 "Uppercase word"
+  print_row "${ALT}  L"                                 "Cancel the changes, revert"
+  print_row "${ALT}  T"                                 "Swap current word with previous"
+  print_row "${ALT}  W"                                 "Delete until beginning (zsh)"
+  print_row "${CTRL}  ${UNDER}"                         "Undo"
+  print_row "${CTRL}  K"                                "Cut till end"
+  print_row "${CTRL}  T"                                "Swap the last two characters before the cursor"
+  print_row "${CTRL}  U"                                "Delete whole line (zsh)/ cut until beginning (bash)"
+  print_row "${CTRL}  W"                                "Cut previous word"
+  # NOT TESTED
+  print_row "${CTRL}  A"                                "start of line"
+  print_row "${CTRL}  E"                                "end of line"
+  print_row "${CTRL}  U"                                "kill to start"
+  print_row "${CTRL}  K"                                "kill to end"
+  n1
+
+  h2 "Modes + Misc"
+  print_row "${CTRL}  X,V"                              "vi mode (zsh)"
+  print_row "bindkey -e"                                "Emacs mode"
+  print_row "${CTRL}  L"                                "Clear screen"
   nl
 
   h1 "fzf"
-  print_row "${CTRL} + R"                               "fuzzy history"
-  print_row "${CTRL} + T"                               "insert file path"
+  print_row "${CTRL}  F"                                "Fuzzy find all subdirectories of the working directory"
+  print_row "${ALT}   C"                                "Fuzzy find all subdirectories of the working directory"
+  # NOT TESTED
+  print_row "${CTRL}  R"                                "fuzzy history"
+  print_row "${CTRL}  T"                                "insert file path"
   nl
 
+  h1 "Zoxide"
+  print_row "zi"                                        "interactive jump (fzf)"
+  # NOT TESTED
+  print_row "z foo"                                     "cd into highest ranked directory matching foo"
+  print_row "z foo bar"                                 "cd into highest ranked directory matching foo and bar"
+  print_row "z foo /"                                   "cd into a subdirectory starting with foo"
+  print_row "z ~/foo"                                   "z also works like a regular cd command"
+  print_row "z foo/"                                    "cd into relative path"
+  print_row "z .."                                      "cd one level up"
+  print_row "z -"                                       "cd into previous directory"
+  print_row "zi foo"                                    "cd with interactive selection (using fzf)"
+  print_row "z foo ${SPACE}  ${TAB}"                    "show interactive completions (zoxide v0.8.0+, bash 4.4+/fish/zsh only)"
+  n1
+
+  print_row "sc"                    "show cheat sheet"
+  n1
   rule
 }
-
-# --- optional: preview the 16 colors so you can pick ---
-show_palette() {
-  local k
-  for k in red orange amber yellow lime green teal cyan sky blue indigo violet magenta pink peach brown lightgray darkgray; do
-    printf '%-10s %s\n' "$k" "$(color $k '██████████')"
-  done
-}
-
-
 
 # Print on interactive shell start
 [[ $- == *i* ]] && show_cheatsheet
 
 # Alias to recall it anytime
 alias sc='show_cheatsheet'
-
-
-
-
-
-/snap/ghostty/103/bin
-❯ ghostty +list-keybinds --default
-
-super + ctrl  + shift + plus    equalize_splits
-super + ctrl  + shift + up      resize_split:up,10
-super + ctrl  + shift + down    resize_split:down,10
-super + ctrl  + shift + right   resize_split:right,10
-super + ctrl  + shift + left    resize_split:left,10
-ctrl  + alt   + shift + j       write_screen_file:open
-super + ctrl  + left_bracket    goto_split:previous
-super + ctrl  + right_bracket   goto_split:next
-ctrl  + alt   + up              goto_split:up
-ctrl  + alt   + down            goto_split:down
-ctrl  + alt   + right           goto_split:right
-ctrl  + alt   + left            goto_split:left
-ctrl  + shift + a               select_all
-ctrl  + shift + c               copy_to_clipboard
-ctrl  + shift + e               new_split:down
-ctrl  + shift + i               inspector:toggle
-ctrl  + shift + j               write_screen_file:paste
-ctrl  + shift + n               new_window
-ctrl  + shift + o               new_split:right
-ctrl  + shift + q               quit
-ctrl  + shift + t               new_tab
-ctrl  + shift + v               paste_from_clipboard
-ctrl  + shift + w               close_tab
-ctrl  + shift + comma           reload_config
-ctrl  + shift + right           next_tab
-ctrl  + shift + left            previous_tab
-ctrl  + shift + page_up         jump_to_prompt:-1
-ctrl  + shift + page_down       jump_to_prompt:1
-ctrl  + shift + enter           toggle_split_zoom
-ctrl  + shift + tab             previous_tab
-alt   + one                     goto_tab:1
-alt   + two                     goto_tab:2
-alt   + three                   goto_tab:3
-alt   + four                    goto_tab:4
-alt   + five                    goto_tab:5
-alt   + six                     goto_tab:6
-alt   + seven                   goto_tab:7
-alt   + eight                   goto_tab:8
-alt   + nine                    last_tab
-alt   + f4                      close_window
-ctrl  + zero                    reset_font_size
-ctrl  + comma                   open_config
-ctrl  + minus                   decrease_font_size:1
-ctrl  + plus                    increase_font_size:1
-ctrl  + equal                   increase_font_size:1
-ctrl  + insert                  copy_to_clipboard
-ctrl  + page_up                 previous_tab
-ctrl  + page_down               next_tab
-ctrl  + enter                   toggle_fullscreen
-ctrl  + tab                     next_tab
-shift + up                      adjust_selection:up
-shift + down                    adjust_selection:down
-shift + right                   adjust_selection:right
-shift + left                    adjust_selection:left
-shift + home                    scroll_to_top
-shift + end                     scroll_to_bottom
-shift + insert                  paste_from_selection
-shift + page_up                 scroll_page_up
-shift + page_down               scroll_page_down
