@@ -1,2 +1,0 @@
--- GLOBAL INIT 
-require("archways")
