@@ -1,3 +1,12 @@
+# .zshrc
+
+# --- OS detection ---
+case "$OSTYPE" in
+  darwin*) OS="mac" ;;
+  linux*)  OS="linux" ;;
+  *)       OS="other" ;;
+esac
+
 # ---- Oh My Zsh core ----
 export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="refined"
@@ -149,41 +158,70 @@ pad_to() {
   printf '%s%*s' "$s" $pad ''
 }
 
-# --- KEY labels ---
-SUPER=$(color blue   SUPER)
-CTRL=$(color yellow CTRL)
-SHIFT=$(color orange SHIFT)
-ALT=$(color cyan    ALT)
-ENTER=$(color lime ENTER)
-TAB=$(color brown TAB)
-
-# SPECIAL
-PGUP=$(color teal PGUP)
-PGDN=$(color teal PGDN)
-H0ME=$(color cyan HOME)
-END=$(color cyan END)
-INS=$(color cyan INS)
-DEL=$(color red DEL)
-F4=$(color sky F4)
-
-# ARROW
-UP=$(color cyan ↑)
-DOWN=$(color cyan ↓)
-LEFT=$(color cyan ←)
-RIGHT=$(color cyan →)
-ARROW=$(color cyan ←↑↓→)
-
-# BRACKETS
-LBR=$(color cyan  [)
-RBR=$(color cyan  ])
-
-# SYMBOLS
-PLUS=$(color orange +)
-SLASH=$(color cyan  /)
-COMMA=$(color cyan ,)
-NUM=$(color cyan NUMBER)
-UNDER=$(color cyan _)
-SPACE=$(color cyan SPACE)
+# --- Key label strings that differ per OS ---
+if [[ $OS == mac ]]; then
+  SUPER=$(color blue ⌘)
+  CTRL=$(color yellow ⌃)
+  SHIFT=$(color orange SHIFT)
+  ALT=$(color cyan ⌥)
+  ENTER=$(color lime ENTER)
+  TAB=$(color brown TAB)
+  # SPECIAL
+  PGUP=$(color teal PGUP)
+  PGDN=$(color teal PGDN)
+  H0ME=$(color cyan HOME)
+  END=$(color cyan END)
+  INS=$(color cyan INS)
+  DEL=$(color red DEL)
+  F4=$(color sky F4)
+  # ARROW
+  UP=$(color cyan ↑)
+  DOWN=$(color cyan ↓)
+  LEFT=$(color cyan ←)
+  RIGHT=$(color cyan →)
+  ARROW=$(color cyan ↑↓←→)
+  # BRACKETS
+  LBR=$(color cyan  [)
+  RBR=$(color cyan  ])
+  # SYMBOLS
+  PLUS=$(color orange +)
+  SLASH=$(color cyan  /)
+  COMMA=$(color cyan ,)
+  NUM=$(color cyan NUMBER)
+  UNDER=$(color cyan _)
+  SPACE=$(color cyan SPACE)
+else
+  SUPER=$(color blue   SUPER)
+  CTRL=$(color yellow CTRL)
+  SHIFT=$(color orange SHIFT)
+  ALT=$(color cyan    ALT)
+  ENTER=$(color lime ENTER)
+  TAB=$(color brown TAB)
+  # SPECIAL
+  PGUP=$(color teal PGUP)
+  PGDN=$(color teal PGDN)
+  H0ME=$(color cyan HOME)
+  END=$(color cyan END)
+  INS=$(color cyan INS)
+  DEL=$(color red DEL)
+  F4=$(color sky F4)
+  # ARROW
+  UP=$(color cyan ↑)
+  DOWN=$(color cyan ↓)
+  LEFT=$(color cyan ←)
+  RIGHT=$(color cyan →)
+  ARROW=$(color cyan ↑↓←→)
+  # BRACKETS
+  LBR=$(color cyan  [)
+  RBR=$(color cyan  ])
+  # SYMBOLS
+  PLUS=$(color orange +)
+  SLASH=$(color cyan  /)
+  COMMA=$(color cyan ,)
+  NUM=$(color cyan NUMBER)
+  UNDER=$(color cyan _)
+  SPACE=$(color cyan SPACE)
+fi
 
 # Optional “spacer” (a few spaces) – visible on purpose
 SP=$(printf '%s' '   ')  # 3 spaces; change if you want more
@@ -226,6 +264,21 @@ center_title() {
     "$(color "$rcol" "$(printf '%*s' $r '' | tr ' ' '-')")"
 }
 
+center_text() {
+  local text="$1" w=${2:-${COLUMNS:-80}} rcol=${3:-gray}
+  local tlen l r
+  tlen=$(visible_len "$text")
+  (( tlen > w-2 )) && text="${text[1,$((w-2))]}" && tlen=$((w-2))   # truncate if too long
+  l=$(( (w - tlen - 2) / 2 ))
+  r=$(( w - tlen - 2 - l ))
+  printf '%s %s %s\n' \
+    "$(color "$rcol" "$(printf '%*s' $l '' | tr ' ' ' ')")" \
+    "$text" \
+    "$(color "$rcol" "$(printf '%*s' $r '' | tr ' ' ' ')")"
+}
+
+h0() { center_text "$(color white "$*")"; nl; }
+
 # h1 <text>         → big header (centered bar + a blank line)
 h1() { center_title "$(color white "$*")"; nl; }
 
@@ -241,7 +294,16 @@ h2() {
 h3() { printf '%s\n\n' "$(color gray "$*")"; }
 
 show_cheatsheet() {
+  h1 "CHEAT SHEET"
+  h0 "v0.0.1"
+  nl
+  nl
+  h0 "created by archways404"
+  nl
+  nl
+  nl
   h1 "GHOSTTY"
+  nl
 
   h2 "General"
   print_row "${CTRL}   ${SHIFT}  N"                     "new_window"
@@ -271,7 +333,7 @@ show_cheatsheet() {
   print_row "${CTRL}   ${PGUP}"                         "previous_tab"
   print_row "${ALT}    ${NUM}"                          "goto_tab NUMBER"
   print_row "${ALT}    9"                               "last_tab"
-  n1
+  nl
 
   h2 "Scrolling"
   print_row "${SHIFT}   ${H0ME}"                        "scroll_to_top"
@@ -300,7 +362,7 @@ show_cheatsheet() {
   print_row "${CTRL}  A"                                "Move cursor to beginning of command"
   print_row "${CTRL}  E"                                "Move cursor to end of command"
   print_row "${CTRL}  X,X"                              "Toggle between the start of line and current cursor position"
-  n1
+  nl
 
   h2 "Editing"
   print_row "${ALT}  C"                                 "Capitalize word"
@@ -321,7 +383,7 @@ show_cheatsheet() {
   print_row "${CTRL}  E"                                "end of line"
   print_row "${CTRL}  U"                                "kill to start"
   print_row "${CTRL}  K"                                "kill to end"
-  n1
+  nl
 
   h2 "Modes + Misc"
   print_row "${CTRL}  X,V"                              "vi mode (zsh)"
@@ -349,13 +411,12 @@ show_cheatsheet() {
   print_row "z -"                                       "cd into previous directory"
   print_row "zi foo"                                    "cd with interactive selection (using fzf)"
   print_row "z foo ${SPACE}  ${TAB}"                    "show interactive completions (zoxide v0.8.0+, bash 4.4+/fish/zsh only)"
-  n1
+  nl
 
-  print_row "sc"                    "show cheat sheet"
-  n1
+  print_row "sc"                   "show cheat sheet"
+  nl
   rule
 }
-
 # Print on interactive shell start
 [[ $- == *i* ]] && show_cheatsheet
 
