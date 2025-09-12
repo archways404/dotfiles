@@ -268,19 +268,31 @@ CTRL=$(color yellow CTRL)
 SHIFT=$(color orange SHIFT)
 ALT=$(color cyan    ALT)
 ENTER=$(color lime ENTER)
-PLUS=$(color orange PLUS)
-ARROW=$(color green ARROW)
-SLASH=$(color cyan  SLASH)
 TAB=$(color brown TAB)
-F4=$(color sky F4)
+
 PGUP=$(color teal PGUP)
 PGDN=$(color teal PGDN)
 H0ME=$(color cyan HOME)
 END=$(color cyan END)
-LEFT=$(color cyan LEFT)
-RIGHT=$(color cyan RIGHT)
 INS=$(color cyan INS)
-COMMA=$(color cyan INS)
+
+UP=$(color cyan ↑)
+DOWN=$(color cyan ↓)
+LEFT=$(color cyan ←)
+RIGHT=$(color cyan →)
+ARROW=$(color cyan ←↑↓→)
+
+LBR=$(color cyan  [)
+RBR=$(color cyan  ])
+
+PLUS=$(color orange +)
+SLASH=$(color cyan  /)
+COMMA=$(color cyan ,)
+NUM=$(color cyan NUMBER)
+
+
+F4=$(color sky F4)
+
 
 # Optional “spacer” (a few spaces) – visible on purpose
 SP=$(printf '%s' '   ')  # 3 spaces; change if you want more
@@ -341,43 +353,59 @@ show_cheatsheet() {
   h1 "GHOSTTY"
 
   h2 "Splits / Tabs"
-  print_row "${SUPER} + ${CTRL}  + ${SHIFT} + ${PLUS}"   "equalize splits"
-  print_row "${SUPER} + ${CTRL}  + ${SHIFT} + ${ARROW}"  "resize split 10"
-  print_row "${SUPER} + ${CTRL}  + ${SLASH}"             "[TOGGLE] prev / next split"
-  print_row "${CTRL}  + ${ALT}   + ${ARROW}"             "target split"
-  print_row "${CTRL}  + ${SHIFT} + ${ENTER}"             "[TOGGLE] split zoom"
-  print_row "${CTRL}  + ${SHIFT} + T"                    "new tab"
-  print_row "${CTRL}  + ${SHIFT} + W"                    "close tab"
-  print_row "${CTRL}  + ${SHIFT} + ${LEFT}"              "prev tab"
-  print_row "${CTRL}  + ${SHIFT} + ${RIGHT}"             "next tab"
-  print_row "${ALT}   + 1-9"                             "goto tab"
-  print_row "${ALT}   + 9"                               "last tab"
-  print_row "${CTRL}  + ${TAB}   + ${PGUP}"              "next tab"
-  print_row "${CTRL}  + ${TAB}   + ${PGDN}"              "prev tab"
-  nl
+  print_row "${SUPER}  ${CTRL}   ${SHIFT}  ${PLUS}"     "equalize splits"
+  print_row "${SUPER}  ${CTRL}   ${SHIFT}  ${ARROW}"    "resize_split 10"
+  print_row "${SUPER}  ${CTRL}   ${SLASH}"              "[TOGGLE] prev / next split"
+  print_row "${SUPER}  ${CTRL}   ${LBR}"                "goto_split:previous"
+  print_row "${SUPER}  ${CTRL}   ${RBR}"                "goto_split:next"
+  print_row "${CTRL}   ${ALT}    ${ARROW}"              "target split"
 
+  print_row "${CTRL}   ${SHIFT}  ${ENTER}"              "[TOGGLE] split zoom"
+  print_row "${CTRL}   ${SHIFT}  T"                     "new tab"
+  print_row "${CTRL}   ${SHIFT}  W"                     "close tab"
+  print_row "${CTRL}   ${SHIFT}  ${LEFT}"               "prev tab"
+  print_row "${CTRL}   ${SHIFT}  ${RIGHT}"              "next tab"
+  print_row "${ALT}    1-9"                             "goto tab"
+  print_row "${ALT}    9"                               "last tab"
+  print_row "${CTRL}   ${TAB}    ${PGUP}"               "next tab"
+  print_row "${CTRL}   ${TAB}    ${PGDN}"               "prev tab"
+
+  print_row "${CTRL}   ${SHIFT}  C"                     "copy"
+  print_row "${CTRL}   ${SHIFT}  V"                     "paste"
+  print_row "${CTRL}   ${SHIFT}  A"                     "select_all"
+  print_row "${CTRL}   ${SHIFT}  E"                     "new_split:down"
+  print_row "${CTRL}   ${SHIFT}  I"                     "inspector:toggle"
+  print_row "${CTRL}   ${SHIFT}  N"                     "new_window"
+  print_row "${CTRL}   ${SHIFT}  O"                     "new_split:right"
+  print_row "${CTRL}   ${SHIFT}  Q"                     "quit"
+  print_row "${CTRL}   ${SHIFT}  T"                     "new_tab"
+  print_row "${CTRL}   ${SHIFT}  W"                     "close_tab"
+  print_row "${CTRL}   ${SHIFT}  ${COMMA}"              "reload_config"
+  print_row "${CTRL}   ${SHIFT}  ${LEFT}"               "previous_tab"
+  print_row "${CTRL}   ${SHIFT}  ${RIGHT}"              "next_tab"
+  print_row "${CTRL}   ${SHIFT}  ${PGUP}"               "jump_to_prompt:-1"
+  print_row "${CTRL}   ${SHIFT}  ${PGDN}"               "jump_to_prompt:1"
+  print_row "${CTRL}   ${SHIFT}  ${ENTER}"              "toggle_split_zoom"
+  print_row "${CTRL}   ${SHIFT}  ${TAB}"                "previous_tab"
+  print_row "${ALT}    ${NUM}"                          "goto_tab NUMBER"
+  print_row "${ALT}    9"                               "last_tab"
+  print_row "${ALT}    ${F4}"                           "close_window"
+  print_row "${CTRL}   ${COMMA}"                        "open config"
+  print_row "${CTRL}   ${PGUP}"                         "previous_tab"
+  print_row "${CTRL}   ${PGDN}"                         "next_tab"
+  print_row "${SHIFT}   ${H0ME}"                        "scroll_to_top"
+  print_row "${SHIFT}   ${END}"                         "scroll_to_bottom"
+  print_row "${SHIFT}   ${PGUP}"                        "scroll_page_up"
+  print_row "${SHIFT}   ${PGDN}"                        "scroll_page_down"
+
+  nl
   h2 "General"
-  print_row "${CTRL}  + ${SHIFT} + C"                    "copy"
-  print_row "${CTRL}  + ${SHIFT} + V"                    "paste"
-  print_row "${CTRL}  + ${INS}"                          "copy selection"
-  print_row "${SHIFT} + ${INS}"                          "paste selection"
-  print_row "${SHIFT} + ${ARROW}"                        "adjust selection"
-  print_row "${SHIFT} + ${PGUP}"                         "scroll up"
-  print_row "${SHIFT} + ${PGDN}"                         "scroll down"
-  print_row "${SHIFT} + ${H0ME}"                         "scroll top"
-  print_row "${SHIFT} + ${END}"                          "scroll bottom"
+  print_row "${CTRL}   ${SHIFT}"                        "PLACEHOLDER"
+
   nl
 
   h2 "Something"
-  print_row "${CTRL}  + ${COMMA}"                        "open config (GHOSTTY)"
-  print_row "${CTRL}  + ${SHIFT} + I"                    "[TOGGLE] inspector"
-  print_row "${CTRL}  + ${INS}"                          "copy selection"
-  print_row "${SHIFT} + ${INS}"                          "paste selection"
-  print_row "${SHIFT} + ${ARROW}"                        "adjust selection"
-  print_row "${SHIFT} + ${PGUP}"                         "scroll up"
-  print_row "${SHIFT} + ${PGDN}"                         "scroll down"
-  print_row "${SHIFT} + ${H0ME}"                         "scroll top"
-  print_row "${SHIFT} + ${END}"                          "scroll bottom"
+  print_row "${CTRL}   ${SHIFT}"                        "PLACEHOLDER"
   nl
 
   h1 "Zsh"
@@ -388,8 +416,8 @@ show_cheatsheet() {
   nl
 
   h1 "fzf"
-  print_row "${CTRL} + R"               "fuzzy history"
-  print_row "${CTRL} + T"               "insert file path"
+  print_row "${CTRL} + R"                               "fuzzy history"
+  print_row "${CTRL} + T"                               "insert file path"
   nl
 
   rule
