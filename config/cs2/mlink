@@ -1,0 +1,1 @@
+mklink "G:\SteamLibrary\steamapps\common\Counter-Strike Global Offensive\game\csgo\cfg\autoexec.cfg" "C:\Users\phili\Documents\DEVELOPER\dotfiles\config\cs2\autoexec.cfg"
