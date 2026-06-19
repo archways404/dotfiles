@@ -1,0 +1,3 @@
+mklink autoexec.cfg "C:\Users\phili\Documents\REPO\dotfiles\config\cs2\autoexec.cfg"
+
+mklink demoexec.cfg "C:\Users\phili\Documents\REPO\dotfiles\config\cs2\demoexec.cfg"
