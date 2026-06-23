@@ -12,3 +12,4 @@ New-Item -ItemType SymbolicLink `
 New-Item -ItemType SymbolicLink `
     -Path demoexec.cfg `
     -Target "C:\Users\phili\Documents\REPO\dotfiles\config\cs2\demoexec.cfg"
+”
