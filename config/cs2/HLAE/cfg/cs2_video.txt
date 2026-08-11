@@ -11,7 +11,7 @@
 	"setting.defaultresheight"		"1440"
 	"setting.refreshrate_numerator"		"0"
 	"setting.refreshrate_denominator"		"0"
-	"setting.fullscreen"		"1"
+	"setting.fullscreen"		"0"
 	"setting.coop_fullscreen"		"0"
 	"setting.nowindowborder"		"0"
 	"setting.mat_vsync"		"0"
