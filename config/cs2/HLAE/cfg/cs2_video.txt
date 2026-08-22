@@ -7,7 +7,7 @@
 	"setting.gpu_mem_level"		"3"
 	"setting.gpu_level"		"3"
 	"setting.knowndevice"		"0"
-	"setting.defaultres"		"1920"
+	"setting.defaultres"		"1800"
 	"setting.defaultresheight"		"1440"
 	"setting.refreshrate_numerator"		"0"
 	"setting.refreshrate_denominator"		"0"

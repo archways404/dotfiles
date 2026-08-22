@@ -36,5 +36,6 @@
 		"/"		"toggleconsole"
 		"t"		"+spray_menu"
 		"."		"+radialradio"
+		"f"		"<unbound>"
 	}
 }
