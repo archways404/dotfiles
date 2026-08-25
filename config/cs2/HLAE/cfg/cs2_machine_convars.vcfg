@@ -63,7 +63,7 @@
 		"cl_hud_telemetry_net_misdelivery_show"		"0"
 		"cl_hud_telemetry_net_quality_graph_show"		"0"
 		"cl_hud_telemetry_ping_poor"		"100"
-		"cl_hud_telemetry_ping_show"		"2"
+		"cl_hud_telemetry_ping_show"		"0"
 		"cl_hud_telemetry_serverrecvmargin_graph_show"		"0"
 		"cl_import_csgo_config"		"false"
 		"cl_interpolate_report"		"false"
@@ -154,7 +154,7 @@
 		"cl_weapon_selection_rarity_color"		"true"
 		"closecaption"		"false"
 		"commentary"		"false"
-		"csgo_map_preview_scale"		"2.702"
+		"csgo_map_preview_scale"		"2.726"
 		"debugoverlay_text_scale"		"1"
 		"demo_flush"		"false"
 		"demo_mouse_enable_binding"		"drop"
@@ -337,6 +337,6 @@
 		"voice_always_sample_mic$2"		"false"
 		"voice_modenable"		"true"
 		"voice_threshold$2"		"-120"
-		"volume"		"0.22"
+		"volume"		"1"
 	}
 }
