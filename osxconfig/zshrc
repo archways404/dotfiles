@@ -1,0 +1,100 @@
+# ============================================================
+#  .zshrc
+# ============================================================
+
+# ---------- System info banner on new terminal ----------
+# `neofetch` was archived by its maintainer in 2024 and is no longer
+# updated, so this uses `fastfetch` — the actively maintained,
+# much faster drop-in replacement. Install with:
+#   brew install fastfetch
+if command -v fastfetch &> /dev/null; then
+  fastfetch
+fi
+
+# ---------- Completion system ----------
+# zsh-completions adds extra completion definitions (for git, docker,
+# brew packages, etc). It just needs to be on $fpath before compinit
+# runs. Install with:
+#   brew install zsh-completions
+if type brew &> /dev/null; then
+  FPATH="$(brew --prefix)/share/zsh-completions:${FPATH}"
+fi
+
+autoload -Uz compinit && compinit
+
+# Nicer completion behavior: case-insensitive matching + a
+# navigable menu instead of just cycling through options
+zstyle ':completion:*' menu select
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+
+# ---------- Autosuggestions (inline, fish-style "ghost text") ----------
+# Suggests commands as you type based on history + completions.
+# Accept a suggestion with the Right arrow or End key.
+# Install with:
+#   brew install zsh-autosuggestions
+source "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+
+# ---------- Your existing tool integrations ----------
+eval "$(starship init zsh)"
+eval "$(zoxide init zsh)"
+eval "$(fzf --zsh)"
+eval "$(mise activate zsh)"
+
+# ---------- Syntax highlighting ----------
+# Colors valid commands green, invalid ones red, highlights strings/
+# paths/flags, etc. This MUST be sourced LAST — after every other
+# plugin/eval that touches zsh's line editor (zle) — or it breaks.
+# Install with:
+#   brew install zsh-syntax-highlighting
+source "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+
+# ============================================================
+#  Cheat sheet — run `termhelp` any time to see this
+# ============================================================
+termhelp() {
+  cat <<'EOF'
+────────────────────────────────────────────────────────────
+ Terminal setup cheat sheet
+────────────────────────────────────────────────────────────
+
+ fastfetch          System info banner (shown on every new shell)
+                     Run manually any time:  fastfetch
+
+ starship            Your shell prompt (git branch, status, etc)
+                     Config:  ~/.config/starship.toml
+
+ zoxide              Smarter `cd` that learns your habits
+                     z <partial-name>     jump to a frecent dir
+                     zi <partial-name>    interactive picker
+                     (keeps working as a drop-in `cd` too)
+
+ fzf                 Fuzzy finder, wired into your shell
+                     ctrl+r                fuzzy-search command history
+                     ctrl+t                fuzzy-search files → inserts path
+                     alt+c                 fuzzy-search dirs → cd into it
+                     <cmd> **<tab>         fuzzy completion, e.g. vim **<tab>
+
+ mise                Runtime/tool version manager (node, python, rust, etc)
+                     mise use -g node@lts   set a tool version globally
+                     mise use -g python@3
+                     mise use -g rust
+                     mise ls                list installed tool versions
+                     mise doctor             check your setup
+
+ zsh-autosuggestions Inline suggestions as you type (from history)
+                     →  or End              accept the suggestion
+                     ctrl+f                 accept one word of it
+
+ zsh-syntax-highlighting
+                     Colors commands as you type (green = valid,
+                     red = invalid, plus string/path highlighting)
+                     No commands — it's passive
+
+ zsh-completions     Extra tab-completion definitions (git, docker, etc)
+                     <tab>                  trigger completion menu
+
+ termhelp            You're looking at it. Run this any time.
+────────────────────────────────────────────────────────────
+EOF
+}
