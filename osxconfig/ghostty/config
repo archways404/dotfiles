@@ -40,7 +40,7 @@ cursor-invert-fg-bg = true
 # "zoomed out twice" the actual default, we bake it into font-size
 # directly: 13 (normal) minus two 1pt steps = 11.
 font-family = "JetBrains Mono"
-font-size = 11
+font-size = 10
 font-thicken = true
 adjust-cell-height = 5%
 
