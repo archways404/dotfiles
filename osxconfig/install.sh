@@ -15,6 +15,8 @@
 # otherwise overwrite.
 
 set -euo pipefail
+SKIP_CAPS=false
+if [ "${1:-}" = "--skip-caps" ]; then SKIP_CAPS=true; fi
 
 DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BACKUP_DIR="$HOME/.dotfiles-backup/$(date +%Y%m%d-%H%M%S)"
@@ -37,5 +39,12 @@ link() {
 
 link "$DOTFILES/zshrc"          "$HOME/.zshrc"
 link "$DOTFILES/ghostty/config" "$HOME/.config/ghostty/config"
+link "$DOTFILES/ghostty/themes/cobalt2-default" "$HOME/.config/ghostty/themes/cobalt2-default"
+
+if [ "$SKIP_CAPS" = false ] && [ -d /Applications/Karabiner-Elements.app ] && command -v python3 >/dev/null 2>&1; then
+  python3 "$DOTFILES/../scripts/install_caps.py"
+elif [ "$SKIP_CAPS" = false ]; then
+  echo "Caps navigation: install Karabiner-Elements and Python 3, then run scripts/install_caps.py."
+fi
 
 echo "Done. Open a new terminal to pick up changes."

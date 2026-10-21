@@ -1,0 +1,70 @@
+name: Installer checks
+on:
+  push:
+    paths: ['scripts/**', 'tests/**', 'windows/**', 'osxconfig/**', 'nvim/**', '*.ps1', '*.cmd', '*.command', '*.sh', '.github/workflows/installers.yml']
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Installer tests
+        run: python -m unittest discover -s tests -v
+      - name: Shell syntax
+        if: runner.os != 'Windows'
+        shell: bash
+        run: bash -n install-macos.command install-nvim.sh osxconfig/install.sh
+      - name: macOS shell syntax
+        if: runner.os == 'macOS'
+        run: zsh -n osxconfig/zshrc
+      - name: PowerShell syntax
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          foreach ($File in @('setup-windows.ps1', 'install-nvim.ps1', 'windows/profile.ps1')) {
+            $Tokens = $null
+            $ParseErrors = $null
+            [void][System.Management.Automation.Language.Parser]::ParseFile((Resolve-Path $File).Path, [ref]$Tokens, [ref]$ParseErrors)
+            if ($ParseErrors.Count) { throw ($ParseErrors | Out-String) }
+          }
+      - name: Install AutoHotkey for syntax smoke test
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: choco install autohotkey --yes --no-progress
+      - name: Install Neovim for bootstrap contract test (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: choco install neovim --yes --no-progress
+      - name: Install Neovim for bootstrap contract test (macOS)
+        if: runner.os == 'macOS'
+        run: brew install neovim
+      - name: Install Neovim for bootstrap contract test (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y neovim
+      - name: Bootstrap contract test
+        run: nvim --headless -u NONE -i NONE -l tests/bootstrap_nvim_spec.lua
+      - name: AutoHotkey syntax and startup
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $Ahk = Get-ChildItem "$env:ProgramFiles\AutoHotkey" -Filter AutoHotkey64.exe -Recurse | Where-Object { $_.DirectoryName -match 'v2' } | Select-Object -First 1
+          if (-not $Ahk) { throw 'AutoHotkey v2 not found' }
+          $Script = (Resolve-Path 'windows/caps-navigation.ahk').Path
+          $ErrorLog = Join-Path $env:RUNNER_TEMP 'ahk-errors.txt'
+          $Process = Start-Process -FilePath $Ahk.FullName -ArgumentList @('/ErrorStdOut', ('"' + $Script + '"')) -PassThru -RedirectStandardOutput $ErrorLog
+          Start-Sleep -Seconds 2
+          if ($Process.HasExited) {
+            if ($Process.ExitCode -ne 0) { throw (Get-Content $ErrorLog -Raw) }
+          } else {
+            Stop-Process -Id $Process.Id
+          }

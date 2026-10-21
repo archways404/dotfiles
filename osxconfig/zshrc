@@ -2,6 +2,14 @@
 #  .zshrc
 # ============================================================
 
+# Homebrew is available in fresh shells on both Apple Silicon and Intel Macs.
+if ! command -v brew >/dev/null 2>&1; then
+  for dotfiles_brew in /opt/homebrew/bin/brew /usr/local/bin/brew; do
+    if [ -x "$dotfiles_brew" ]; then eval "$("$dotfiles_brew" shellenv)"; break; fi
+  done
+  unset dotfiles_brew
+fi
+
 # ---------- System info banner on new terminal ----------
 # `neofetch` was archived by its maintainer in 2024 and is no longer
 # updated, so this uses `fastfetch` — the actively maintained,
@@ -20,6 +28,7 @@ if type brew &> /dev/null; then
   FPATH="$(brew --prefix)/share/zsh-completions:${FPATH}"
 fi
 
+if [ -d "$HOME/.docker/completions" ]; then fpath=("$HOME/.docker/completions" $fpath); fi
 autoload -Uz compinit && compinit
 
 # Nicer completion behavior: case-insensitive matching + a
@@ -32,14 +41,18 @@ zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 # Accept a suggestion with the Right arrow or End key.
 # Install with:
 #   brew install zsh-autosuggestions
-source "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+if command -v brew >/dev/null 2>&1; then
+  dotfiles_suggestions="$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+  [ ! -f "$dotfiles_suggestions" ] || source "$dotfiles_suggestions"
+  unset dotfiles_suggestions
+fi
 ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 
 # ---------- Your existing tool integrations ----------
-eval "$(starship init zsh)"
-eval "$(zoxide init zsh)"
-eval "$(fzf --zsh)"
-eval "$(mise activate zsh)"
+if command -v starship >/dev/null 2>&1; then eval "$(starship init zsh)"; fi
+if command -v zoxide >/dev/null 2>&1; then eval "$(zoxide init zsh)"; fi
+if command -v fzf >/dev/null 2>&1; then eval "$(fzf --zsh)"; fi
+if command -v mise >/dev/null 2>&1; then eval "$(mise activate zsh)"; fi
 
 # ---------- Syntax highlighting ----------
 # Colors valid commands green, invalid ones red, highlights strings/
@@ -47,7 +60,15 @@ eval "$(mise activate zsh)"
 # plugin/eval that touches zsh's line editor (zle) — or it breaks.
 # Install with:
 #   brew install zsh-syntax-highlighting
-source "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+if command -v brew >/dev/null 2>&1; then
+  dotfiles_highlighting="$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+  [ ! -f "$dotfiles_highlighting" ] || source "$dotfiles_highlighting"
+  unset dotfiles_highlighting
+fi
+
+# ---------- Quick directory jumps ----------
+repo() { builtin cd -- "$HOME/REPO"; }
+dl() { builtin cd -- "$HOME/Downloads"; }
 
 # ============================================================
 #  Cheat sheet — run `termhelp` any time to see this
@@ -57,6 +78,9 @@ termhelp() {
 ────────────────────────────────────────────────────────────
  Terminal setup cheat sheet
 ────────────────────────────────────────────────────────────
+
+ repo               Jump to ~/REPO
+ dl                 Jump to ~/Downloads
 
  fastfetch          System info banner (shown on every new shell)
                      Run manually any time:  fastfetch
@@ -98,3 +122,10 @@ termhelp() {
 ────────────────────────────────────────────────────────────
 EOF
 }
+
+
+setopt interactive_comments
+export EDITOR=nvim VISUAL=nvim
+
+# Added by the Postman CLI installer
+export PATH="$HOME/.local/bin:$PATH"

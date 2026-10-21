@@ -1,2 +1,8 @@
 /config/cs2/ReShade
 /config/xhairdecoder/node_modules
+
+.DS_Store
+__pycache__/
+*.pyc
+*.backup-*
+nvim.log

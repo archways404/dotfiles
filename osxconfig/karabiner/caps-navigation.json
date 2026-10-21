@@ -1,0 +1,172 @@
+{
+  "title": "Dotfiles: Caps navigation in Ghostty",
+  "rules": [
+    {
+      "description": "Dotfiles: hold Caps + WASD for line/file boundaries in Ghostty",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "a",
+            "modifiers": {
+              "optional": [
+                "any"
+              ]
+            }
+          },
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": [
+                "^com\\.mitchellh\\.ghostty$"
+              ]
+            },
+            {
+              "type": "variable_if",
+              "name": "dotfiles_caps_navigation",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "key_code": "home"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "d",
+            "modifiers": {
+              "optional": [
+                "any"
+              ]
+            }
+          },
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": [
+                "^com\\.mitchellh\\.ghostty$"
+              ]
+            },
+            {
+              "type": "variable_if",
+              "name": "dotfiles_caps_navigation",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "key_code": "end"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "w",
+            "modifiers": {
+              "optional": [
+                "any"
+              ]
+            }
+          },
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": [
+                "^com\\.mitchellh\\.ghostty$"
+              ]
+            },
+            {
+              "type": "variable_if",
+              "name": "dotfiles_caps_navigation",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "key_code": "home",
+              "modifiers": [
+                "left_control"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "s",
+            "modifiers": {
+              "optional": [
+                "any"
+              ]
+            }
+          },
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": [
+                "^com\\.mitchellh\\.ghostty$"
+              ]
+            },
+            {
+              "type": "variable_if",
+              "name": "dotfiles_caps_navigation",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "key_code": "end",
+              "modifiers": [
+                "left_control"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "caps_lock",
+            "modifiers": {
+              "optional": [
+                "any"
+              ]
+            }
+          },
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": [
+                "^com\\.mitchellh\\.ghostty$"
+              ]
+            }
+          ],
+          "to": [
+            {
+              "set_variable": {
+                "name": "dotfiles_caps_navigation",
+                "value": 1
+              }
+            }
+          ],
+          "to_after_key_up": [
+            {
+              "set_variable": {
+                "name": "dotfiles_caps_navigation",
+                "value": 0
+              }
+            }
+          ],
+          "to_if_alone": [
+            {
+              "key_code": "caps_lock"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

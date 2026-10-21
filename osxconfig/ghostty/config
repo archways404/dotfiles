@@ -3,14 +3,16 @@
 #  ------------------------------------------------------------
 #  Where to put this file:
 #    macOS / Linux : ~/.config/ghostty/config
-#    Windows       : %APPDATA%\ghostty\config
+#    Windows       : use the included Windows Terminal setup
 #
-#  After editing, reload with:  ctrl+shift+, (or Ghostty menu > Reload Config)
+#  After editing, reload with:  cmd+shift+, (or Ghostty menu > Reload Config)
 # ============================================================
 
 # ---------- Transparency & blur ----------
 # background-opacity: 0 = fully transparent, 1 = fully opaque
 background-opacity = 0.65
+# Apply the same transparency to Neovim menus, selections, and status colors.
+background-opacity-cells = true
 # background-blur-radius: blur strength behind the window (macOS,
 # and Linux compositors that support it e.g. KWin). 0 disables it.
 background-blur-radius = 45
@@ -28,7 +30,7 @@ window-theme = dark
 macos-titlebar-style = tabs
 
 # ---------- Theme & colors ----------
-theme = "Catppuccin Mocha"
+theme = "cobalt2-default"
 cursor-style = block
 cursor-style-blink = true
 cursor-invert-fg-bg = true
@@ -39,10 +41,11 @@ cursor-invert-fg-bg = true
 # the current session and don't change the baseline. So to make
 # "zoomed out twice" the actual default, we bake it into font-size
 # directly: 13 (normal) minus two 1pt steps = 11.
-font-family = "JetBrains Mono"
+font-family = "JetBrainsMono Nerd Font"
 font-size = 10
 font-thicken = true
 adjust-cell-height = 5%
+macos-option-as-alt = left
 
 # ---------- Behavior ----------
 copy-on-select = true
@@ -51,13 +54,11 @@ mouse-hide-while-typing = true
 shell-integration = detect
 shell-integration-features = cursor,sudo,title
 
-# ---------- macOS niceties ----------
-macos-option-as-alt = true
-
 # ---------- Keybindings ----------
 # macOS copy/paste (cmd+c / cmd+v) — these are Ghostty's default on
 # macOS, but set explicitly in case they've been overridden anywhere
-keybind = cmd+c=copy_to_clipboard
+# Copy terminal selections; otherwise forward Cmd+C to Neovim (Kitty keyboard protocol).
+keybind = performable:cmd+c=copy_to_clipboard
 keybind = cmd+v=paste_from_clipboard
 keybind = ctrl+shift+n=new_window
 keybind = ctrl+shift+t=new_tab
