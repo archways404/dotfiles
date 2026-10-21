@@ -5,7 +5,9 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
+from types import SimpleNamespace
+import ctypes
 
 SCRIPTS = Path(__file__).resolve().parents[1] / 'scripts'
 sys.path.insert(0, str(SCRIPTS))
@@ -78,6 +80,23 @@ class SettingsTests(unittest.TestCase):
             self.assertTrue((Path(folder) / 'dotfiles/profile.ps1').exists())
             setup.configure_windows(skip_remap=True)
             self.assertEqual(list(target.parent.glob('*.backup-*')), [])
+
+    def test_font_registration_uses_pointer_sized_result(self):
+        with tempfile.TemporaryDirectory() as folder:
+            fonts = Path(folder) / 'Microsoft/Windows/Fonts'
+            fonts.mkdir(parents=True)
+            (fonts / 'JetBrainsMonoNerdFont-Regular.ttf').write_bytes(b'font fixture')
+            registry = SimpleNamespace(HKEY_CURRENT_USER=1, REG_SZ=1, CreateKey=MagicMock(), SetValueEx=MagicMock())
+            def broadcast(*args):
+                self.assertEqual(ctypes.sizeof(args[-1]._obj), ctypes.sizeof(ctypes.c_void_p))
+                return 1
+            windows_api = SimpleNamespace(gdi32=SimpleNamespace(AddFontResourceExW=MagicMock()),
+                                          user32=SimpleNamespace(SendMessageTimeoutW=broadcast))
+            with patch.dict(os.environ, {'LOCALAPPDATA': folder}), patch.dict(sys.modules, {'winreg': registry}), \
+                 patch.object(setup.ctypes, 'windll', windows_api, create=True), patch.object(setup, 'download_release') as download:
+                setup.install_windows_font()
+                download.assert_not_called()
+                registry.SetValueEx.assert_called_once()
 
     def test_dry_run_never_executes_installers(self):
         for system in ('Darwin', 'Windows'):

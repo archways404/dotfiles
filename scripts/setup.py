@@ -151,7 +151,7 @@ def install_windows_font():
             for destination in directory.glob('JetBrainsMonoNerdFont-*.ttf'):
                 winreg.SetValueEx(registry, destination.stem + ' (TrueType)', 0, winreg.REG_SZ, str(destination))
                 ctypes.windll.gdi32.AddFontResourceExW(str(destination), 0, 0)
-    result = ctypes.c_ulong()
+    result = ctypes.c_size_t()
     ctypes.windll.user32.SendMessageTimeoutW(0xFFFF, 0x001D, 0, 0, 0x0002, 1000, ctypes.byref(result))
 
 
