@@ -44,7 +44,12 @@ jobs:
       - name: Install Neovim for bootstrap contract test (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
-        run: choco install neovim --yes --no-progress
+        run: |
+          choco install neovim --yes --no-progress
+          if ($LASTEXITCODE -ne 0) { throw 'Neovim installation failed' }
+          $env:Path = [Environment]::GetEnvironmentVariable('Path', 'Machine') + ';' + [Environment]::GetEnvironmentVariable('Path', 'User') + ';' + $env:Path
+          $Nvim = Get-Command nvim.exe -ErrorAction Stop
+          Split-Path $Nvim.Source | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
       - name: Install Neovim for bootstrap contract test (macOS)
         if: runner.os == 'macOS'
         run: brew install neovim
