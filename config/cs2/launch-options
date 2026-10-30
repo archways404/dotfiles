@@ -1,0 +1,1 @@
+-fullscreen -w 1120 -h 960 -freq 360 -high -novid -allow_third_party_software +exec autoexec.cfg 
