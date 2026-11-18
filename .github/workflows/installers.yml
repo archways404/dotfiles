@@ -23,7 +23,7 @@ jobs:
       - name: Shell syntax
         if: runner.os != 'Windows'
         shell: bash
-        run: bash -n install-macos.command install-nvim.sh osxconfig/install.sh
+        run: bash -n install-macos.command install-nvim.sh osxconfig/install.sh ssh-macos.command
       - name: macOS shell syntax
         if: runner.os == 'macOS'
         run: zsh -n osxconfig/zshrc
@@ -31,7 +31,7 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          foreach ($File in @('setup-windows.ps1', 'install-nvim.ps1', 'windows/profile.ps1')) {
+          foreach ($File in @('setup-windows.ps1', 'install-nvim.ps1', 'windows/profile.ps1', 'ssh-windows.ps1')) {
             $Tokens = $null
             $ParseErrors = $null
             [void][System.Management.Automation.Language.Parser]::ParseFile((Resolve-Path $File).Path, [ref]$Tokens, [ref]$ParseErrors)
@@ -73,3 +73,30 @@ jobs:
           } else {
             Stop-Process -Id $Process.Id
           }
+
+  ssh-setup:
+    name: SSH setup (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: SSH configuration, export and signing tests
+        run: python -m unittest discover -s tests -p test_ssh_setup.py -v
+      - name: SSH macOS launcher syntax
+        if: runner.os != 'Windows'
+        shell: bash
+        run: bash -n ssh-macos.command
+      - name: SSH Windows launcher syntax
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $Tokens = $null
+          $ParseErrors = $null
+          [void][System.Management.Automation.Language.Parser]::ParseFile((Resolve-Path 'ssh-windows.ps1').Path, [ref]$Tokens, [ref]$ParseErrors)
+          if ($ParseErrors.Count) { throw ($ParseErrors | Out-String) }
