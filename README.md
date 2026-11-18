@@ -97,5 +97,6 @@ Sources: [Homebrew](https://docs.brew.sh/Installation),
 ## YubiKey SSH
 
 For a portable hardware-backed default SSH identity, see the
-[YubiKey SSH setup](config/ssh/README.md). Key creation and recovery run separately
-from the general installer, with PIN entry and touch in your own terminal.
+[YubiKey SSH setup](config/ssh/README.md). The current personal identity uses PIV; the work account uses a separate FIDO2
+credential. Setup runs separately from the general installer, with PIN entry in
+your own terminal.

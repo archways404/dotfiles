@@ -1,5 +1,62 @@
 # Portable SSH with a YubiKey
 
+## Current setup: PIV personal identity
+
+Personal/default SSH now uses the ECCP256 key generated on YubiKey404 in PIV
+slot 9a. Subject: `CN=archways404 ssh`; certificate expiry: **2030-12-01**.
+The private key never leaves the YubiKey. Its policies are **PIN once per session**
+and **touch never**, as selected by Authenticator's GUI defaults. This is the PIV
+PIN, separate from the FIDO2 PIN. There is no local private-key-file passphrase.
+Changing PIN/touch policies on an existing PIV key requires replacing that key;
+do not generate a replacement in the occupied slot just to change a label or expiry.
+
+- `yubikey-piv-9a.pub`: the personal SSH public key registered on archways404.
+- `yubikey-piv-9a.pem`: the public self-signed X.509 certificate, not a private key.
+- `yubikey-main.pub` and `yubikey-work.pub`: earlier resident FIDO2 public keys.
+  These remain registered. The work GitHub alias still uses its FIDO2 key.
+
+On another Mac, clone dotfiles via HTTPS, install the provider, plug in the same
+YubiKey, and configure the existing PIV credential:
+
+```sh
+brew install openssh yubico-piv-tool
+python3 scripts/setup_piv_ssh.py --provider "$(brew --prefix yubico-piv-tool)/lib/libykcs11.dylib"
+ssh -T git@github-personal
+```
+
+The helper exports only the PIV Authentication public key, refuses to replace a
+different saved public key, backs up SSH config, validates parsing, and installs
+these defaults. It generates no private keys and requires no management key.
+For Linux, install libykcs11/OpenSSH and supply the installed `.so` path instead.
+This helper targets macOS/Linux; Windows needs separate client/provider setup.
+
+| Host | Credential |
+| --- | --- |
+| `github-personal` or `github.com` | PIV 9a, personal archways404 account |
+| `github-work` | Resident FIDO2 work key, philipstenberg-TVX account |
+| Other hosts | PIV 9a unless an earlier host-specific setting overrides it |
+
+Earlier Includes/host overrides remain in place, including OrbStack's identity.
+GitHub success reports the account name and exits with status 1. Actual PIV
+signing/login still requires a successful interactive test; merely registering
+the public key does not test signing. Keep existing recovery credentials until
+login works. HTTPS Git remotes are unchanged.
+
+Register `yubikey-piv-9a.pub` in each server account's `authorized_keys` to use PIV
+there. Do not upload this personal key to the work GitHub account; that account
+needs a separate PIV key if it is migrated later. On a new Mac, recover the existing
+work FIDO2 handle using the recovery commands below, THEN run the PIV setup helper.
+Running the older FIDO2 helper's create/recover/configure commands restores its
+FIDO2 defaults, so rerun `setup_piv_ssh.py` afterward to restore the PIV default.
+The FIDO2 GitHub enrollment helper below handles only the earlier FIDO2 identities.
+
+To renew the X.509 certificate, create/import a new certificate for the SAME key;
+ordinary SSH public-key registration stays the same. Generating a new private key
+changes your SSH identity and requires re-enrollment everywhere. A spare YubiKey
+needs its own separately authorized key. Never commit PINs, PUKs or management keys.
+
+## Earlier FIDO2 setup and work-account recovery
+
 The main identity is a resident `ed25519-sk` credential generated on the YubiKey,
 with PIN verification and touch required. The private key never leaves the token.
 `~/.ssh/id_ed25519_sk_yubikey_main` is a local handle, not an exportable private key.
