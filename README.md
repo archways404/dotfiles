@@ -94,9 +94,33 @@ Sources: [Homebrew](https://docs.brew.sh/Installation),
 [WinGet](https://learn.microsoft.com/en-us/windows/package-manager/winget/),
 [Karabiner](https://karabiner-elements.pqrs.org/docs/getting-started/installation/).
 
-## YubiKey SSH
+## YubiKey SSH and automatic commit signing
 
-For a portable hardware-backed default SSH identity, see the
-[YubiKey SSH setup](config/ssh/README.md). The current personal identity uses PIV; the work account uses a separate FIDO2
-credential. Setup runs separately from the general installer, with PIN entry in
-your own terminal.
+Download/extract or clone this repository on your new computer, plug in your
+YubiKey, then double-click:
+
+| Platform | SSH setup menu |
+| --- | --- |
+| **macOS** | **`ssh-macos.command`** |
+| **Windows 10/11** | **`ssh-windows.cmd`** |
+
+The launchers bootstrap **Homebrew/WinGet and Python** when needed. Choose
+**Set up this computer** to install Git, OpenSSH, Yubico PIV Tool, YubiKey Manager
+CLI and GitHub CLI, configure the existing YubiKey PIV identity, select Git's SSH
+client, and export public files. GitHub Desktop installation is an optional menu
+item. Existing settings are backed up; no new private key is generated.
+
+The menu also provides public-key clipboard/export for manual GitHub/server GUI
+import, personal/work login tests, work FIDO2 recovery, status and rollback.
+Exports go to `~/Downloads/yubikey-ssh-export/` and contain only the SSH public key,
+public certificate, fingerprint and instructions.
+
+For **automatic commit signing in Git and GitHub Desktop**, choose **Enable
+automatic commit signing**, register the public key on GitHub as a **Signing key**,
+then choose **Unlock commit signing** and **Test signing**. Unlock again after
+agent/computer restarts. PINs are entered locally and are not saved. The signing
+default is the personal PIV identity; work-account signing needs its own registered
+identity. Administrator, PIN and GitHub authorization prompts remain interactive.
+
+See the [SSH setup and signing guide](config/ssh/README.md) for exact steps,
+Windows client requirements, command-line options, GUI import formats and recovery.

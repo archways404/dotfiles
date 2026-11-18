@@ -1,217 +1,164 @@
-# Portable SSH with a YubiKey
+# SSH and commit signing with YubiKey404
 
-## Current setup: PIV personal identity
+Clone or download/extract this dotfiles repository onto a **trusted computer**.
+Plug in the same YubiKey. You do not generate a new identity for each computer.
 
-Personal/default SSH now uses the ECCP256 key generated on YubiKey404 in PIV
-slot 9a. Subject: `CN=archways404 ssh`; certificate expiry: **2030-12-01**.
-The private key never leaves the YubiKey. Its policies are **PIN once per session**
-and **touch never**, as selected by Authenticator's GUI defaults. This is the PIV
-PIN, separate from the FIDO2 PIN. There is no local private-key-file passphrase.
-Changing PIN/touch policies on an existing PIV key requires replacing that key;
-do not generate a replacement in the occupied slot just to change a label or expiry.
-
-- `yubikey-piv-9a.pub`: the personal SSH public key registered on archways404.
-- `yubikey-piv-9a.pem`: the public self-signed X.509 certificate, not a private key.
-- `yubikey-main.pub` and `yubikey-work.pub`: earlier resident FIDO2 public keys.
-  These remain registered. The work GitHub alias still uses its FIDO2 key.
-
-On another Mac, clone dotfiles via HTTPS, install the provider, plug in the same
-YubiKey, and configure the existing PIV credential:
-
-```sh
-brew install openssh yubico-piv-tool
-python3 scripts/setup_piv_ssh.py --provider "$(brew --prefix yubico-piv-tool)/lib/libykcs11.dylib"
-ssh -T git@github-personal
-```
-
-The helper exports only the PIV Authentication public key, refuses to replace a
-different saved public key, backs up SSH config, validates parsing, and installs
-these defaults. It generates no private keys and requires no management key.
-For Linux, install libykcs11/OpenSSH and supply the installed `.so` path instead.
-This helper targets macOS/Linux; Windows needs separate client/provider setup.
-
-| Host | Credential |
+| Platform | Double-click |
 | --- | --- |
-| `github-personal` or `github.com` | PIV 9a, personal archways404 account |
-| `github-work` | Resident FIDO2 work key, philipstenberg-TVX account |
+| macOS | **`ssh-macos.command`** |
+| Windows 10/11 | **`ssh-windows.cmd`** |
+
+These are independent of the full editor/terminal installers. The launchers
+bootstrap Homebrew or WinGet and Python if missing, then show the SSH menu. Normal
+administrator/UAC, Apple Command Line Tools and GitHub authorization prompts need
+your interaction. No account passwords or PINs are saved or transcribed.
+
+Choose **Set up this computer** to install Git, OpenSSH, Yubico PIV Tool, YubiKey
+Manager CLI and GitHub CLI; apply the existing PIV identity to SSH; select this
+OpenSSH client for Git; and export public files. Other menu actions let you run
+each operation independently. GitHub Desktop installation is a separate option.
+The script neither generates/replaces token keys nor changes PINs/management keys.
+
+The current setup uses an ECCP256 PIV key in slot **9a** for `archways404`, with
+**PIN once per session and no touch**, and a separate resident FIDO2 key for
+`philipstenberg-TVX`. The public PIV certificate expires **2030-12-01**. Existing
+FIDO2 registrations remain available as fallback. PIV and FIDO2 have separate PINs
+on this YubiKey 5C NFC.
+
+## First setup on a new machine
+
+1. Launch the menu and choose **Set up this computer**.
+2. Choose **Copy public SSH key and open GitHub settings** if the personal key
+   has not yet been registered. In the correct GitHub account, choose
+   **Authentication key**. Reusing the same YubiKey does not need re-enrollment.
+3. Choose **Test personal GitHub login**. Enter your PIV PIN and confirm the
+   success greeting names `archways404`. GitHub exits 1 even on successful tests.
+4. If using the work account, choose **Recover resident work key**; enter its
+   FIDO2 PIN and local-handle passphrase as prompted. The script reapplies the PIV
+   personal default afterward. Test the work account separately. If the work
+   handle already exists, skip recovery. The earlier FIDO2 signing issue has not
+   been resolved by this PIV personal setup.
+
+| SSH host | Credential |
+| --- | --- |
+| `github-personal` and `github.com` | PIV 9a, personal account |
+| `github-work` | Resident FIDO2 work identity |
 | Other hosts | PIV 9a unless an earlier host-specific setting overrides it |
 
-Earlier Includes/host overrides remain in place, including OrbStack's identity.
-GitHub success reports the account name and exits with status 1. Actual PIV
-signing/login still requires a successful interactive test; merely registering
-the public key does not test signing. Keep existing recovery credentials until
-login works. HTTPS Git remotes are unchanged.
+Git remotes may use `git@github-personal:archways404/REPO.git` or
+`git@github-work:Telavox/REPO.git`. Existing HTTPS remotes stay HTTPS. A GitHub
+organization may additionally require SSO authorization. Servers still need the
+public key registered on the appropriate account. Verify new host fingerprints
+through a trusted source when SSH asks.
 
-Register `yubikey-piv-9a.pub` in each server account's `authorized_keys` to use PIV
-there. Do not upload this personal key to the work GitHub account; that account
-needs a separate PIV key if it is migrated later. On a new Mac, recover the existing
-work FIDO2 handle using the recovery commands below, THEN run the PIV setup helper.
-Running the older FIDO2 helper's create/recover/configure commands restores its
-FIDO2 defaults, so rerun `setup_piv_ssh.py` afterward to restore the PIV default.
-The FIDO2 GitHub enrollment helper below handles only the earlier FIDO2 identities.
+Leading Includes and earlier host overrides are preserved, including OrbStack.
+The managed default supersedes the earlier generic 1Password SSH agent setting.
+The menu can remove that managed block and restore saved global Git settings.
+Timestamped config backups allow exact manual restoration. Settings overridden
+in a repository or by environment variables remain effective.
 
-To renew the X.509 certificate, create/import a new certificate for the SAME key;
-ordinary SSH public-key registration stays the same. Generating a new private key
-changes your SSH identity and requires re-enrollment everywhere. A spare YubiKey
-needs its own separately authorized key. Never commit PINs, PUKs or management keys.
+## Automatic commit signing: regular Git and GitHub Desktop
 
-## Earlier FIDO2 setup and work-account recovery
+1. Choose **Enable automatic commit signing**. This backs up and sets global
+   `gpg.format=ssh`, `user.signingkey`, `gpg.ssh.program`, `commit.gpgsign=true`,
+   and a local allowed-signers file. Author name/email are not changed.
+2. Choose **Copy public key for GitHub Signing key registration**. Register the
+   PIV public key AGAIN on your personal account, this time selecting
+   **Signing key**. Authentication-key enrollment alone does not enable GitHub
+   signature verification. Use a commit email verified on that account.
+3. Choose **Unlock commit signing**. When `ssh-add` requests the provider
+   passphrase, enter the **PIV PIN**. The PIN is not saved. Windows may request UAC
+   approval to start its SSH agent service; no SSH server is enabled.
+4. Choose **Test signing with a temporary commit**. It signs and verifies an
+   isolated commit without modifying your project history.
+5. Commit normally from Git or GitHub Desktop. Restart Desktop if it was already
+   open when settings changed.
 
-The main identity is a resident `ed25519-sk` credential generated on the YubiKey,
-with PIN verification and touch required. The private key never leaves the token.
-`~/.ssh/id_ed25519_sk_yubikey_main` is a local handle, not an exportable private key.
-Keep even this handle out of Git. Only `yubikey-main.pub`, configuration and these
-instructions belong in this repository. Use this only on computers you trust.
+The signing bridge is installed under `~/.ssh/dotfiles-signing/` with absolute
+client/Python paths, so GUI apps do not depend on your interactive shell PATH or
+an exported `SSH_AUTH_SOCK`. macOS uses a dedicated local signing agent; Windows
+uses the OpenSSH agent service. Unlock again after agent/computer restarts or if
+the token identity is no longer available. The key must remain plugged in when
+signing. A locked/unavailable key fails the commit rather than silently signing
+with another key or committing unsigned. GUI commits do **not** pop up a PIN
+dialog: unlock in the SSH menu before committing.
 
-## First setup
+These defaults select the **personal PIV signing identity**. They do not create
+a separate work signing key or change your work author identity. Repository-local
+signing settings can override the global defaults. Register and configure a
+separate work signing identity before expecting work-account Verified badges.
+The local allowed-signers file trusts signatures by this public key for any local
+author principal; GitHub independently checks its own registered key/email trust.
 
-On macOS install `brew install openssh ykman`. Ensure Homebrew's bin directory
-(`/opt/homebrew/bin` on Apple Silicon, `/usr/local/bin` on Intel) precedes `/usr/bin`
-in your shell PATH. Check `command -v ssh ssh-keygen` in a new terminal. Linux needs
-OpenSSH with libfido2 support. Native Windows needs a FIDO-capable OpenSSH build;
-WSL requires extra USB integration or delegation to the Windows client.
+## Export for manual GUI import
 
-Plug in the intended YubiKey. Check `ykman info` and `ykman fido info`. If a FIDO2
-PIN is not set, use `ykman fido access change-pin` interactively. Never put PINs in
-commands, Git, or chat. The FIDO2 PIN is separate from the PIV PIN in Authenticator.
-Do not reset FIDO2: a reset deletes existing FIDO credentials/passkeys.
+Choose **Export public key + certificate**. Default location:
 
-Run from this repo in your own terminal (on Windows use `py -3` for `python3`):
-
-```sh
-python3 scripts/yubikey_ssh.py create
-cp ~/.ssh/id_ed25519_sk_yubikey_main.pub config/ssh/yubikey-main.pub
+```text
+~/Downloads/yubikey-ssh-export/
+  archways404-ssh.pub
+  archways404-piv-certificate.pem
+  README.txt
 ```
 
-The script refuses to overwrite keys, generates the credential interactively, then
-backs up and updates `~/.ssh/config`. A local handle passphrase is optional and is
-separate from the FIDO2 PIN. It never reads or records your PIN. Key creation is
-deliberately separate from the general dotfiles installer.
+- **GitHub/server SSH key field:** paste the entire single line from the `.pub`
+  file, beginning `ecdsa-sha2-nistp256`. The copy menu can put it on the clipboard.
+- **Server GUI:** choose an OpenSSH public-key import or paste that line into the
+  intended account's authorized keys. Never supply a private key to the server.
+- **X.509 certificate field:** the `.pem` is a public certificate. It is not the
+  format GitHub's SSH-key field expects and is not an SSH CA user certificate.
 
-The managed `Host *` block makes this the default identity and uses it directly,
-without an agent. It is inserted before the first existing generic `Host *` block,
-after existing leading Includes and host overrides. On this Mac that preserves
-OrbStack's leading Include and its explicit identity. The existing 1Password agent
-line stays in the config but is superseded for hosts using the new default. If a
-host still needs 1Password, place its `Host hostname` block BEFORE the managed
-block, set its `IdentityAgent` socket and `IdentitiesOnly no`, and check `ssh -G hostname`.
-To undo, remove the lines between and including `BEGIN/END dotfiles YubiKey SSH`,
-or restore the printed config backup. No server settings are changed.
+The export includes its fingerprint and instructions. It contains no private key,
+PIN, PUK or management key. Export refuses to overwrite different existing files;
+choose another directory with `--export-dir` when exporting a different identity.
 
-## Authorize and test
-
-Upload the contents of `yubikey-main.pub` as an authentication key at GitHub
-Settings → SSH and GPG keys. For each server, add that same public key as one line
-in the account's `~/.ssh/authorized_keys`. Retain current access until the new key
-has successfully logged in. GitHub organization SSO may need separate authorization.
+## Command-line usage
 
 ```sh
-ssh-keygen -lf ~/.ssh/id_ed25519_sk_yubikey_main.pub
-ssh -G github.com
-ssh -T git@github.com
-ssh your-user@your-server
+# macOS launchers can also run one action instead of opening the menu:
+bash ssh-macos.command setup
+bash ssh-macos.command export --export-dir "$HOME/Desktop/SSH-public-files"
+
+# With Python already available (Windows: py -3 instead of python3):
+python3 scripts/ssh_setup.py
+python3 scripts/ssh_setup.py configure
+python3 scripts/ssh_setup.py signing
+python3 scripts/ssh_setup.py unlock-signing
+python3 scripts/ssh_setup.py test-signing
+python3 scripts/ssh_setup.py restore
 ```
 
-Verify first-contact host fingerprints with a trusted source. GitHub's successful
-SSH test reports authentication success but exits with status 1. Git remotes using
-HTTPS continue using HTTPS; switch an individual remote to `git@github.com:OWNER/REPO.git`
-when you want SSH. FIDO SSH keys require compatible servers (OpenSSH 8.2+).
+Windows examples: `ssh-windows.cmd setup` or
+`ssh-windows.cmd export --export-dir "%USERPROFILE%\Desktop\SSH-public-files"`.
+Use `--provider` for a nonstandard absolute path to `libykcs11.dylib`, `.dll`, or
+`.so`. The older `scripts/setup_piv_ssh.py --provider ...` entry point remains an
+alias for Configure. The older FIDO2 setup/enrollment helpers are retained for
+recovery; reapply the PIV default after running their Configure/Create actions.
 
-## Two GitHub accounts
+## Windows compatibility and limits
 
-GitHub does not allow the same authentication key on two accounts. The main key
-belongs to `archways404`; a separate resident credential on the same physical
-YubiKey belongs to `philipstenberg-TVX`:
+The Windows installer selects `Microsoft.OpenSSH.Preview` from Microsoft's
+WinGet manifests (the upstream Win32-OpenSSH release channel), with **client-only**
+MSI features. It installs `Yubico.PIVTool` and puts its DLL directory on the menu
+process's PATH for dependency loading. The installed OpenSSH client is preferred
+over the Windows inbox client. Runtime export through `ssh-keygen -D` checks actual
+PKCS#11 support before changing SSH settings. Unsupported clients, missing keys,
+or architecture mismatches stop with an error rather than reporting setup success.
+Windows ARM64 uses the x64 OpenSSH/PIV pair where supported by Windows emulation,
+because the current PIV package has no native ARM64 build.
 
-```sh
-python3 scripts/yubikey_ssh.py create --profile work
-cp ~/.ssh/id_ed25519_sk_yubikey_work.pub config/ssh/yubikey-work.pub
-```
+Menu tests and the selected Git client use explicit paths. An `ssh` command in an
+unrelated existing terminal can still resolve to the older Windows inbox client;
+use the client path shown by **Show device/client status** if needed. WSL is a
+separate environment and is not provisioned by the native Windows launcher.
 
-Register `yubikey-main.pub` on archways404 and `yubikey-work.pub` on
-philipstenberg-TVX. You can use the GitHub web settings, or (with `gh` signed in
-to both accounts) run:
+macOS public-key export and SSH config parsing were exercised against the real
+YubiKey. Unit tests cover preservation, idempotence, export and rollback; a
+disposable software-key integration test signs/verifies a commit without a TTY.
+Windows CI checks Python behavior and PowerShell parsing. Physical Windows PIV
+PIN/login/signing behavior and GitHub Desktop commits require validation on a PC.
 
-```sh
-python3 scripts/enroll_yubikey_github.py
-```
-
-The enrollment helper switches to each named account, confirms its identity,
-requests the `write:public_key` OAuth scope through GitHub's normal browser flow
-if needed, uploads only the matching public key, verifies enrollment, then restores
-the previously active CLI account. The scope permits listing and creating SSH
-public keys. Check the account name before approving each browser authorization.
-It skips an already-enrolled key and never uploads local key handles.
-
- When the work handle exists, the helper configures these routes:
-
-| SSH hostname | Identity |
-| --- | --- |
-| `github.com` or `github-personal` | Personal/main key |
-| `github-work` | Work key, connecting to github.com |
-| Other hosts | Main key unless overridden earlier |
-
-Use `git@github-work:Telavox/REPO.git` for work-account repositories and
-`git@github-personal:archways404/REPO.git` for personal repositories. Test with
-`ssh -T git@github-work` and `ssh -T git@github-personal`. The work alias excludes
-the main key so a missing work enrollment cannot silently authenticate as personal.
-Existing HTTPS remotes are unchanged.
-
-See [GitHub key uniqueness](https://docs.github.com/en/authentication/troubleshooting-ssh/error-key-already-in-use).
-
-## Another computer
-
-Install a compatible client, clone dotfiles via HTTPS, plug in the SAME YubiKey:
-
-```sh
-python3 scripts/yubikey_ssh.py recover --public-key config/ssh/yubikey-main.pub
-```
-
-For the work account, also run:
-
-```sh
-python3 scripts/yubikey_ssh.py recover --profile work --public-key config/ssh/yubikey-work.pub
-```
-
-This runs `ssh-keygen -K` in a private temporary directory, matches the saved public
-key, restores the handle under the standard name, and configures SSH. The public
-key remains the same, so servers need no re-enrollment. If the handle is already
-present, use `python3 scripts/yubikey_ssh.py configure`. The physical YubiKey and
-its PIN are required; cloning dotfiles alone does not give anyone your SSH access.
-
-Generate an independent key on a spare YubiKey and authorize its public key on
-every service as a backup. A key generated on the first YubiKey cannot be cloned
-to the spare. Keep a separate recovery route and remove a lost token's public key
-from every service. Do not run the main-key create command again for the spare:
-use a different filename/application label and keep its public key separately.
-
-## Certificates and other YubiKey uses
-
-FIDO2 SSH does not use the PIV certificate slots shown in Yubico Authenticator.
-Those slots pair a private key with an X.509 certificate:
-
-| Slot | Typical purpose |
-| --- | --- |
-| 9a Authentication | Smart-card login, client authentication such as VPN or mTLS |
-| 9c Digital signature | Document or email signing with compatible software |
-| 9d Key management | Decryption, for example S/MIME email |
-| 9e Card authentication | Card/device authentication, usually without a PIN |
-
-PIV can also provide SSH authentication via PKCS#11, but FIDO2 is simpler for this
-setup. Empty PIV certificate slots do not prove that no private keys exist there.
-Do not generate/import into a PIV slot without checking for existing keys first.
-An employer/CA must issue a certificate trusted by the service for corporate
-smart-card/VPN/mTLS use. A self-signed certificate does not create that trust.
-Configure the PIV PIN, PUK and management key securely when adopting PIV, storing
-recovery values in your password manager. Keep encryption-key recovery in mind
-before using a non-exportable PIV key for data you cannot afford to lose.
-
-OpenSSH user certificates are a different format from PIV/X.509 certificates. An
-SSH CA can sign your public key for a limited time, and servers trust that CA.
-They are useful for centrally managed fleets; they require server-side CA trust.
-The CA private key must stay out of dotfiles and should not be the daily login key.
-The YubiKey also supports passkeys/2FA; these do not require filling the PIV slots.
-
-References: [Yubico FIDO2 SSH guide](https://developers.yubico.com/SSH/Securing_SSH_with_FIDO2.html),
-[PIV certificate slots](https://developers.yubico.com/PIV/Introduction/Certificate_slots.html),
-[SSH with PIV](https://developers.yubico.com/PIV/Guides/SSH_with_PIV_and_PKCS11.html).
+References: [Yubico PIV/PKCS#11 SSH](https://developers.yubico.com/PIV/Guides/SSH_with_PIV_and_PKCS11.html),
+[YKCS11 Windows DLL setup](https://docs.yubico.com/software/yubikey/tools/pivtool/piv-tool-ykcs11.html),
+[Microsoft client-only installer](https://github.com/PowerShell/Win32-OpenSSH/wiki/Install-Win32-OpenSSH-Using-MSI),
+[GitHub commit signing](https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits).
