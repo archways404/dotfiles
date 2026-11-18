@@ -6,3 +6,7 @@ __pycache__/
 *.pyc
 *.backup-*
 nvim.log
+
+# Local SSH key/handle files never belong in Git. Public keys are shareable.
+**/id_*
+!**/id_*.pub

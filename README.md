@@ -93,3 +93,9 @@ check. This does not replace testing a complete install on a fresh physical mach
 Sources: [Homebrew](https://docs.brew.sh/Installation),
 [WinGet](https://learn.microsoft.com/en-us/windows/package-manager/winget/),
 [Karabiner](https://karabiner-elements.pqrs.org/docs/getting-started/installation/).
+
+## YubiKey SSH
+
+For a portable hardware-backed default SSH identity, see the
+[YubiKey SSH setup](config/ssh/README.md). Key creation and recovery run separately
+from the general installer, with PIN entry and touch in your own terminal.
