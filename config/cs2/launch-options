@@ -1,1 +1,1 @@
--windowed -noborder -w 1280 -h 1080 -freq 360 -high -novid -allow_third_party_software +exec autoexec.cfg
+-fullscreen -w 1280 -h 1024 -freq 360 -high -novid -allow_third_party_software +exec autoexec.cfg
